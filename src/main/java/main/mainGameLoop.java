@@ -13,9 +13,36 @@ import toolbox.Color;
 import toolbox.Light;
 import toolbox.MyMouse;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+
 public class mainGameLoop {
 
+    private static void setup(String pathToAdd){
+        Field usrPathsField = null;
+        try {
+            usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+            usrPathsField.setAccessible(true);
+
+            String[] paths = (String[]) usrPathsField.get(null);
+
+            for (String path : paths)
+                if (path.equals(pathToAdd))
+                    return;
+
+            String[] newPaths = paths.clone();
+            newPaths[newPaths.length - 1] = pathToAdd;
+            usrPathsField.set(null, newPaths);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args){
+        setup("libs/");
+
         DisplayManager.createDisplay();
         Loader loader = new Loader();
 

@@ -4,9 +4,6 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.*;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class DisplayManager {
 
     private static final int WIDTH = 1024;
