@@ -14,21 +14,21 @@
             <artifactId>lwjgl</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/lwjgl.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/resources/lwjgl.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.lwjgl.util</groupId>
             <artifactId>lwjgl-util</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/lwjgl_util.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/resources/lwjgl_util.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.newdawn.slick</groupId>
             <artifactId>slick-utils</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/slick-util.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/resources/slick-util.jar</systemPath>
         </dependency>
     </dependencies>
 
