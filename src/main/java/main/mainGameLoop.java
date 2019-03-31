@@ -41,7 +41,7 @@ public class mainGameLoop {
     }
 
     public static void main(String[] args){
-        setup("libs/");
+        setup("src/main/resources/natives/macosx");
 
         DisplayManager.createDisplay();
         Loader loader = new Loader();
