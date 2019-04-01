@@ -6,10 +6,7 @@ import loader.Loader;
 import manager.DisplayManager;
 import manager.RenderManager;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
 import terrain.Terrain;
-import toolbox.Color;
 import toolbox.MyMouse;
 
 import java.lang.reflect.Field;
@@ -17,7 +14,7 @@ import java.lang.reflect.Field;
 public class mainGameLoop {
 
   private static void setup(String pathToAdd) {
-    Field usrPathsField = null;
+    Field usrPathsField;
     try {
       usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
       usrPathsField.setAccessible(true);
@@ -37,7 +34,8 @@ public class mainGameLoop {
   }
 
   public static void main(String[] args) {
-    setup("src/main/resources/natives/macosx");
+
+    setup("src/main/resources/natives/" + determineOS());
 
     DisplayManager.createDisplay();
     Loader loader = new Loader();
@@ -60,5 +58,16 @@ public class mainGameLoop {
     renderer.cleanUp();
     loader.cleanUp();
     DisplayManager.closeDisplay();
+  }
+
+  private static String determineOS() {
+    String operationSystemName = System.getProperty("os.name");
+    if (operationSystemName.startsWith("Windows")){
+      return "windows";
+    }else if (operationSystemName.startsWith("Mac")){
+      return "macosx";
+    }else {
+      return null;
+    }
   }
 }
