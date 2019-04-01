@@ -27,8 +27,8 @@ public class TerrainShader extends ShaderProgram {
   @Override
   protected void bindAttributes() {
     super.bindAttribute(0, "inPosition");
-    super.bindAttribute(1, "inNormal");
-    super.bindAttribute(3, "inColor");
+    super.bindAttribute(1, "inColor");
+    super.bindAttribute(2, "inNormal");
   }
 
   public void loadTransformationMatrix(Matrix4f matrix) {
