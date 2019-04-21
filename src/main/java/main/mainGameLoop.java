@@ -2,72 +2,65 @@ package main;
 
 import camera.Camera;
 import camera.Target;
+import input.Input;
 import loader.Loader;
-import manager.DisplayManager;
+import manager.Display;
 import manager.RenderManager;
-import org.lwjgl.opengl.Display;
+import object.Object;
 import terrain.Terrain;
-import toolbox.MyMouse;
-
-import java.lang.reflect.Field;
+import toolbox.Timer;
 
 public class mainGameLoop {
 
-  private static void setup(String pathToAdd) {
-    Field usrPathsField;
-    try {
-      usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
-      usrPathsField.setAccessible(true);
-
-      String[] paths = (String[]) usrPathsField.get(null);
-
-      for (String path : paths) if (path.equals(pathToAdd)) return;
-
-      String[] newPaths = paths.clone();
-      newPaths[newPaths.length - 1] = pathToAdd;
-      usrPathsField.set(null, newPaths);
-    } catch (NoSuchFieldException e) {
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      e.printStackTrace();
-    }
-  }
+  private static final int TARGET_UPS = 30;
 
   public static void main(String[] args) {
 
-    setup("src/main/resources/natives/" + determineOS());
+    float delta;
+    float accumulator = 0f;
+    float interval = 1f / TARGET_UPS;
+    float alpha = 0;
 
-    DisplayManager.createDisplay();
+    Display display = new Display();
+    display.createDisplay();
+
+    Timer timer = new Timer();
+    timer.init();
+
+    Target target = new Target();
+    Camera camera = new Camera(target);
+    Input input = new Input(camera);
+
     Loader loader = new Loader();
 
-    RenderManager renderer = new RenderManager();
+    RenderManager renderManager = new RenderManager();
 
     Terrain terrain = new Terrain(loader);
+    Object object = new Object(loader);
 
-    Camera camera = new Camera(new Target());
+    while (!display.shouldClose()) {
 
-    MyMouse mouse = MyMouse.getActiveMouse();
+      delta = timer.getDelta();
+      accumulator += delta;
 
-    while (!Display.isCloseRequested()) {
-      camera.move();
-      mouse.update();
-      renderer.processTerrain(terrain);
-      renderer.render(camera);
-      DisplayManager.updateDisplay();
+      input.handleInput();
+
+      while (accumulator >= interval) {
+        camera.update();
+        timer.updateUPS();
+        accumulator -= interval;
+      }
+
+      renderManager.processTerrain(terrain);
+      renderManager.processObject(object);
+      renderManager.render(camera);
+      timer.updateFPS();
+      timer.update();
+
+      /* Update window to show the new screen */
+      input.checkInput();
+      display.updateDisplay();
     }
-    renderer.cleanUp();
-    loader.cleanUp();
-    DisplayManager.closeDisplay();
-  }
-
-  private static String determineOS() {
-    String operationSystemName = System.getProperty("os.name");
-    if (operationSystemName.startsWith("Windows")){
-      return "windows";
-    }else if (operationSystemName.startsWith("Mac")){
-      return "macosx";
-    }else {
-      return null;
-    }
+    renderManager.cleanUp();
   }
 }
