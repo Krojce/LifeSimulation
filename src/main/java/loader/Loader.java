@@ -2,7 +2,10 @@ package loader;
 
 import model.RawModel;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -15,20 +18,13 @@ public class Loader {
   private List<Integer> vbos = new ArrayList<Integer>();
 
   public RawModel loadTerrainToVAO(
-      float[] positions, int[] indexes, float[] colors) {
+      float[] positions, int[] indexes, float[] colors, float[] normals) {
     int vaoID = createVAO();
     bindIndexesVBO(indexes);
     storeDataInAttributeList(0, 3, positions);
     storeDataInAttributeList(1, 3, colors);
+    storeDataInAttributeList(2, 3, normals);
 
-    unbindVAO();
-    return new RawModel(vaoID, indexes.length);
-  }
-
-  public RawModel loadToVAO(float[] positions, int[] indexes){
-    int vaoID = createVAO();
-    bindIndexesVBO(indexes);
-    storeDataInAttributeList(0, 3, positions);
     unbindVAO();
     return new RawModel(vaoID, indexes.length);
   }
