@@ -1,12 +1,13 @@
 package manager;
 
 import camera.Camera;
-import camera.Light;
+import camera.DirectionalLight;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector4f;
 import terrain.Terrain;
 import terrain.TerrainRenderer;
 import terrain.TerrainShader;
@@ -15,7 +16,8 @@ public class RenderManager {
 
   private static final float FOV = 70;
   private static final float NEAR_PLANE = 0.1f;
-  private static final float FAR_PLANE = 10000;
+  public static final Vector4f SKY_COLOR = new Vector4f(0.4f, 0.6f, 0.9f, 0f);
+  private static final float FAR_PLANE = 3000f;
 
   private Matrix4f projectionMatrix;
 
@@ -30,7 +32,7 @@ public class RenderManager {
     terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
   }
 
-  public void render(Camera camera, Light light) {
+  public void render(Camera camera, DirectionalLight light) {
     prepare();
     terrainShader.start();
     terrainShader.loadViewMatrix(camera);
@@ -53,7 +55,7 @@ public class RenderManager {
     }
     GL11.glEnable(GL11.GL_DEPTH_TEST);
     GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-    GL11.glClearColor(0.4f, 0.6f, 0.9f, 0f);
+    GL11.glClearColor(SKY_COLOR.x, SKY_COLOR.y, SKY_COLOR.z, SKY_COLOR.w);
   }
 
   private void createProjectionMatrix() {

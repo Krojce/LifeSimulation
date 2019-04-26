@@ -1,10 +1,13 @@
 package terrain;
 
 import camera.Camera;
-import camera.Light;
+import camera.DirectionalLight;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import shader.ShaderProgram;
 import toolbox.Maths;
+
+import static manager.RenderManager.SKY_COLOR;
 
 public class TerrainShader extends ShaderProgram {
   private static final String VERTEX_FILE = "src/main/java/shader/terrainVertexShader.txt";
@@ -13,11 +16,14 @@ public class TerrainShader extends ShaderProgram {
   private int locationTransformationMatrix;
   private int locationProjectionMatrix;
   private int locationViewMatrix;
-  private int lightPosition;
+
+  private int skyColor;
+
   private int lightDirection;
+  private int lightAmbient;
+  private int lightDiffuse;
+  private int lightSpecular;
   private int lightColor;
-  private int lightBias;
-  private int ambientLight;
 
   public TerrainShader() {
     super(VERTEX_FILE, FRAGMENT_FILE);
@@ -29,11 +35,13 @@ public class TerrainShader extends ShaderProgram {
     locationProjectionMatrix = super.getUniformLocation("projectionMatrix");
     locationViewMatrix = super.getUniformLocation("viewMatrix");
 
-    lightPosition = super.getUniformLocation("lightPosition");
+    skyColor = super.getUniformLocation("skyColor");
+
     lightDirection = super.getUniformLocation("lightDirection");
+    lightAmbient = super.getUniformLocation("lightAmbient");
+    lightDiffuse = super.getUniformLocation("lightDiffuse");
+    lightSpecular = super.getUniformLocation("lightSpecular");
     lightColor = super.getUniformLocation("lightColor");
-    lightBias = super.getUniformLocation("lightBias");
-    ambientLight = super.getUniformLocation("ambientLight");
   }
 
   @Override
@@ -43,12 +51,17 @@ public class TerrainShader extends ShaderProgram {
     super.bindAttribute(2, "inNormal");
   }
 
-  public void loadLight(Light light) {
-    super.loadVector3f(lightPosition, light.getPosition());
+  public void loadLight(DirectionalLight light) {
     super.loadVector3f(lightDirection, light.getDirection());
+    super.loadVector3f(lightAmbient, light.getAmbient());
+    super.loadVector3f(lightDiffuse, light.getDiffuse());
+    super.loadVector3f(lightSpecular, light.getSpecular());
     super.loadVector3f(lightColor, light.getColor());
-    super.loadVector2f(lightBias, light.getLightBias());
-    super.loadVector3f(ambientLight, light.getAmbient());
+    loadSkyColor();
+  }
+
+  public void loadSkyColor() {
+    super.loadVector3f(skyColor, new Vector3f(SKY_COLOR.x, SKY_COLOR.y, SKY_COLOR.z));
   }
 
   public void loadTransformationMatrix(Matrix4f matrix) {

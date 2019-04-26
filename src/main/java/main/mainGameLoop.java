@@ -1,13 +1,12 @@
 package main;
 
 import camera.Camera;
-import camera.Light;
+import camera.DirectionalLight;
 import camera.Target;
 import loader.Loader;
 import manager.DisplayManager;
 import manager.RenderManager;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import terrain.Terrain;
 import toolbox.Color;
@@ -44,7 +43,12 @@ public class mainGameLoop {
     DisplayManager.createDisplay();
     Loader loader = new Loader();
 
-    Light light = new Light(new Vector3f(0.3f, 1000f, 0.5f), new Vector3f(1000f, 1000f, 1000f), new Color(1f, 0.8f, 0.8f), new Vector2f(0.9f, 0.2f));
+    DirectionalLight sun = new DirectionalLight(
+            new Vector3f(-0.2f, -1.0f, -0.3f),
+            new Vector3f(0.2f, 0.2f, 0.2f),
+            new Vector3f(0.5f, 0.5f, 0.5f),
+            new Vector3f(1.0f, 1.0f, 1.0f),
+            new Color(1.0f, 1.0f, 1.0f));
 
     RenderManager renderer = new RenderManager();
 
@@ -58,7 +62,7 @@ public class mainGameLoop {
       camera.move();
       mouse.update();
       renderer.processTerrain(terrain);
-      renderer.render(camera, light);
+      renderer.render(camera, sun);
       DisplayManager.updateDisplay();
     }
     renderer.cleanUp();
