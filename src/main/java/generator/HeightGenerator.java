@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class HeightGenerator {
 
-  private static final float AMPLITUDE = 120;
+    private static final float AMPLITUDE = 200;
 
   private static Random random = new Random();
   private static int seed;

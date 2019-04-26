@@ -27,26 +27,26 @@ public class TerrainRenderer {
     unbindData();
   }
 
-  public void prepareTerrain(Terrain terrain) {
+  private void prepareTerrain(Terrain terrain) {
     RawModel model = terrain.getModel();
     GL30.glBindVertexArray(model.getVaoID());
     GL20.glEnableVertexAttribArray(0);
     GL20.glEnableVertexAttribArray(1);
-    GL20.glEnableVertexAttribArray(3);
+    GL20.glEnableVertexAttribArray(2);
   }
 
   private void unbindData() {
     // clean up
     GL20.glDisableVertexAttribArray(0);
     GL20.glDisableVertexAttribArray(1);
-    GL20.glDisableVertexAttribArray(3);
+    GL20.glDisableVertexAttribArray(2);
     GL30.glBindVertexArray(0);
   }
 
   private void loadModelMatrix(Terrain terrain) {
     Matrix4f transformationMatrix =
         Maths.createTransformationMatrix(
-            new Vector3f(terrain.getX(), 0, terrain.getZ()), 0, 0, 0, 1);
+                new Vector3f(0, 0, 0), 0, 0, 0, 1);
     shader.loadTransformationMatrix(transformationMatrix);
   }
 }

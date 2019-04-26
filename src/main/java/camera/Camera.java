@@ -1,18 +1,16 @@
 package camera;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.util.vector.Vector3f;
 
 public class Camera extends Thread {
 
-  private static final float TURN_SPEED = 0.5f;
   private static final float MAX_ZOOM = 400;
   private static final float MIN_ZOOM = 15;
-  private static final float MAX_PITCH = 90;
+    private static final float MAX_PITCH = 130;
   private static final float MIN_PITCH = 10;
 
-  private float distanceFromPlayer = 50;
+    private float distanceFromPlayer = 0;
 
   private Vector3f position = new Vector3f(0, 10, 0);
   private float pitch = 30;
@@ -24,11 +22,7 @@ public class Camera extends Thread {
   }
 
   public void move() {
-    if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
-      target.increaseRotation(-TURN_SPEED);
-    } else if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
-      target.increaseRotation(TURN_SPEED);
-    }
+      target.increaseRotation(target.calculateRotationChange());
     target.moveTarget();
     calculateZoom();
     calculatePitch();

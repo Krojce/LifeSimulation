@@ -1,6 +1,7 @@
 package manager;
 
 import camera.Camera;
+import camera.Light;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -14,7 +15,7 @@ public class RenderManager {
 
   private static final float FOV = 70;
   private static final float NEAR_PLANE = 0.1f;
-  private static final float FAR_PLANE = 1000;
+  private static final float FAR_PLANE = 10000;
 
   private Matrix4f projectionMatrix;
 
@@ -29,10 +30,11 @@ public class RenderManager {
     terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
   }
 
-  public void render(Camera camera) {
+  public void render(Camera camera, Light light) {
     prepare();
     terrainShader.start();
     terrainShader.loadViewMatrix(camera);
+    terrainShader.loadLight(light);
     terrainRenderer.render(terrain);
     terrainShader.stop();
   }
