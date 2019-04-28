@@ -109,7 +109,9 @@ public class Loader {
 
   public int loadTexture(String fileName) {
     Texture texture = null;
-    //find the file to make a texture
+
+    System.out.println(fileName);
+
     try {
       texture = TextureLoader.getTexture("PNG", new FileInputStream("src/main/java/resources/" + fileName + ".png"));
     } catch (FileNotFoundException e) {

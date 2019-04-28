@@ -1,5 +1,6 @@
 package render;
 
+import gui.ButtonPanel;
 import loader.Loader;
 import model.RawModel;
 import org.lwjgl.opengl.GL11;
@@ -23,7 +24,8 @@ public class GuiRenderer {
         guiShader = new GuiShader();
     }
 
-    public void render(List<GuiTexture> textures) {
+    public void render(ButtonPanel panel) {
+        List<GuiTexture> textures = panel.getGuiTextures();
         guiShader.start();
         GL30.glBindVertexArray(quad.getVaoID());
         GL20.glEnableVertexAttribArray(0);

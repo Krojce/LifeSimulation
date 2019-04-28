@@ -4,7 +4,7 @@ import camera.Camera;
 import camera.DirectionalLight;
 import camera.Target;
 import entity.BaseEntity;
-import gui.Button;
+import gui.ButtonPanel;
 import loader.Loader;
 import loader.OBJLoader;
 import manager.DisplayManager;
@@ -12,11 +12,9 @@ import manager.RenderManager;
 import model.RawModel;
 import model.TexturedModel;
 import org.lwjgl.opengl.Display;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import render.GuiRenderer;
 import terrain.Terrain;
-import textures.GuiTexture;
 import textures.ModelTexture;
 import toolbox.Color;
 import toolbox.input.MyMouse;
@@ -95,41 +93,20 @@ public class mainGameLoop {
     Raycast raycast = new Raycast(camera, renderer.getProjectionMatrix(), terrain);
 
     GuiRenderer guiRenderer = new GuiRenderer(loader);
-    float ratioY = (float) 512 / Display.getHeight();
-    float ratioX = (float) 512 / Display.getWidth();
-    float scaleX = ratioX / 5;
-    float scaleY = ratioY / 5;
-    float padding = 0.01f;
-
-    List<Button> buttonTextureList = new ArrayList<Button>();
-    List<GuiTexture> guiTextures = new ArrayList<GuiTexture>();
-    String[] guiNames = {"deer-gui", "bear-gui", "boar-gui", "rabbit-gui", "tree-gui"};
-    String[] entityNames = {"DEER", "BEAR", "BOAR", "RABBIT", "TREE"};
-
-    for (int i = 0; i < 5; i++) {
-      GuiTexture gui = new GuiTexture(loader.loadTexture(guiNames[i]), new Vector2f(1 - scaleX - padding, 1 - scaleY - padding - 2 * i * scaleY - i * padding), new Vector2f(scaleX, scaleY));
-      Button button = new Button(gui, padding, mouse, entityNames[i]);
-      buttonTextureList.add(button);
-      guiTextures.add(gui);
-    }
+    ButtonPanel buttonPanel = new ButtonPanel(mouse, loader);
 
     while (!Display.isCloseRequested()) {
       for (BaseEntity entity : entities) {
         renderer.processEntity(entity);
       }
 
-      for (Button button : buttonTextureList) {
-        button.update();
-        if (button.isOnButton()) {
-          System.out.println(button.getName());
-        }
-      }
+      buttonPanel.isOnButton();
 
       camera.move();
       mouse.update();
       renderer.processTerrain(terrain);
       renderer.render(camera, sun);
-      guiRenderer.render(guiTextures);
+      guiRenderer.render(buttonPanel);
       DisplayManager.updateDisplay();
     }
 
@@ -137,11 +114,6 @@ public class mainGameLoop {
     loader.cleanUp();
     DisplayManager.closeDisplay();
   }
-
-  private static int generateRandom(int min, int max) {
-    return min + (int) (Math.random() * ((max - min) + 1));
-  }
-
 
   private static String determineOS() {
     String operationSystemName = System.getProperty("os.name");
