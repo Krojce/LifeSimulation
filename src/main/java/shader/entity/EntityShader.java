@@ -11,8 +11,8 @@ import static manager.RenderManager.SKY_COLOR;
 
 public class EntityShader extends ShaderProgram {
 
-    private static final String VERTEX_FILE = "src/main/java/shaders/entityShader/vertexShader.txt";
-    private static final String FRAGMENT_FILE = "src/main/java/shaders/entityShader/fragmentShader.txt";
+    private static final String VERTEX_FILE = "src/main/java/shader/entity/vertexShader.txt";
+    private static final String FRAGMENT_FILE = "src/main/java/shader/entity/fragmentShader.txt";
 
     private int locationTransformationMatrix;
     private int locationProjectionMatrix;

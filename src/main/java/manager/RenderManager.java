@@ -32,7 +32,7 @@ public class RenderManager {
   private Terrain terrain;
 
   private EntityManager entityManager;
-  private EntityShader entityShader;
+    private EntityShader entityShader = new EntityShader();
   private EntityRenderer entityRenderer;
   private Map<TexturedModel, List<UUID>> entities = new HashMap<TexturedModel, List<UUID>>();
 

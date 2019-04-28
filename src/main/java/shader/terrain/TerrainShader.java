@@ -10,8 +10,8 @@ import toolbox.Maths;
 import static manager.RenderManager.SKY_COLOR;
 
 public class TerrainShader extends ShaderProgram {
-  private static final String VERTEX_FILE = "src/main/java/shader/terrainVertexShader.txt";
-  private static final String FRAGMENT_FILE = "src/main/java/shader/terrainFragmentShader.txt";
+  private static final String VERTEX_FILE = "src/main/java/shader/terrain/vertexShader.txt";
+  private static final String FRAGMENT_FILE = "src/main/java/shader/terrain/fragmentShader.txt";
 
   private int locationTransformationMatrix;
   private int locationProjectionMatrix;

@@ -1,0 +1,44 @@
+#version 400
+
+in vec3 inPosition;
+in vec3 inColor;
+in vec3 inNormal;
+
+out vec4 passColor;
+out vec3 passLight;
+
+uniform mat4 transformationMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
+
+uniform vec3 lightDirection;
+uniform vec3 lightAmbient;
+uniform vec3 lightDiffuse;
+uniform vec3 lightSpecular;
+uniform vec3 lightColor;
+
+vec3 calculateDirectionalLight() {
+
+    vec3 viewDirection = vec3(viewMatrix[1][3], viewMatrix[2][3], viewMatrix[3][3]);
+
+    vec3 lightDir = normalize(-lightDirection);
+
+    // diffuse shading
+    float diffuseFactor = max(dot(inNormal, lightDir), 0.0);
+
+    // specular shading
+    vec3 reflectDirection = reflect(-lightDir, inNormal);
+    float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.0), 0);
+
+    // combine results
+    vec3 ambient  = lightAmbient;
+    vec3 diffuse  = lightDiffuse  * diffuseFactor;
+    vec3 specular = lightColor * specularFactor;
+
+    return (ambient + diffuse + specular);
+}
+
+void main(void){
+	gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(inPosition,1.0);
+    passColor = vec4(inColor * calculateDirectionalLight(), 1.0);
+}
