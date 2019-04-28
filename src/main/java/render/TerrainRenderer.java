@@ -1,4 +1,4 @@
-package terrain;
+package render;
 
 import model.RawModel;
 import org.lwjgl.opengl.GL11;
@@ -6,6 +6,8 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
+import shader.terrain.TerrainShader;
+import terrain.Terrain;
 import toolbox.Maths;
 
 public class TerrainRenderer {

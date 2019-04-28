@@ -6,7 +6,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -16,9 +21,22 @@ public class Loader {
 
   private List<Integer> vaos = new ArrayList<Integer>();
   private List<Integer> vbos = new ArrayList<Integer>();
+  private List<Integer> textures = new ArrayList<Integer>();
 
-  public RawModel loadTerrainToVAO(
-      float[] positions, int[] indexes, float[] colors, float[] normals) {
+  public RawModel loadToVAO(float[] positions, int[] indexes, float[] textureCoordinates, float[] normals) {
+
+    int vaoID = createVAO();
+    bindIndexesVBO(indexes);
+
+    storeDataInAttributeList(0, 3, positions);
+    storeDataInAttributeList(1, 2, textureCoordinates);
+    storeDataInAttributeList(2, 3, normals);
+
+    unbindVAO();
+    return new RawModel(vaoID, indexes.length);
+  }
+
+  public RawModel loadTerrainToVAO(float[] positions, int[] indexes, float[] colors, float[] normals) {
     int vaoID = createVAO();
     bindIndexesVBO(indexes);
     storeDataInAttributeList(0, 3, positions);
@@ -80,5 +98,20 @@ public class Loader {
     buffer.put(data);
     buffer.flip();
     return buffer;
+  }
+
+  public int loadTexture(String fileName) {
+    Texture texture = null;
+    //find the file to make a texture
+    try {
+      texture = TextureLoader.getTexture("PNG", new FileInputStream("src/main/java/resources/" + fileName + ".png"));
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    int textureID = texture != null ? texture.getTextureID() : -1;
+    textures.add(textureID);
+    return textureID;
   }
 }

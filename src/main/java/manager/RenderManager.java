@@ -2,15 +2,21 @@ package manager;
 
 import camera.Camera;
 import camera.DirectionalLight;
+import componentArchitecture.EntityManager;
+import model.TexturedModel;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector4f;
+import render.EntityRenderer;
+import render.TerrainRenderer;
+import shader.entity.EntityShader;
+import shader.terrain.TerrainShader;
 import terrain.Terrain;
-import terrain.TerrainRenderer;
-import terrain.TerrainShader;
+
+import java.util.*;
 
 public class RenderManager {
 
@@ -25,15 +31,25 @@ public class RenderManager {
   private TerrainShader terrainShader = new TerrainShader();
   private Terrain terrain;
 
+  private EntityManager entityManager;
+  private EntityShader entityShader;
+  private EntityRenderer entityRenderer;
+  private Map<TexturedModel, List<UUID>> entities = new HashMap<TexturedModel, List<UUID>>();
+
   public RenderManager() {
     GL11.glEnable(GL11.GL_CULL_FACE);
     GL11.glCullFace(GL11.GL_BACK);
     createProjectionMatrix();
     terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
+    entityRenderer = new EntityRenderer(entityShader, projectionMatrix, entityManager);
   }
 
   public void render(Camera camera, DirectionalLight light) {
     prepare();
+    renderTerrain(camera, light);
+  }
+
+  private void renderTerrain(Camera camera, DirectionalLight light) {
     terrainShader.start();
     terrainShader.loadViewMatrix(camera);
     terrainShader.loadLight(light);
@@ -41,8 +57,27 @@ public class RenderManager {
     terrainShader.stop();
   }
 
+  private void renderEntities(Camera camera, DirectionalLight light) {
+    entityShader.start();
+    entityShader.loadLight(light);
+    entityShader.loadViewMatrix(camera);
+    entityRenderer.render(entities);
+    entityShader.stop();
+  }
+
   public void processTerrain(Terrain terrain) {
     this.terrain = terrain;
+  }
+
+  public void proccessEntity(UUID entity, TexturedModel texturedModel) {
+    List<UUID> batch = entities.get(texturedModel);
+    if (batch != null) {
+      batch.add(entity);
+    } else {
+      List<UUID> newBatch = new ArrayList<UUID>();
+      newBatch.add(entity);
+      entities.put(texturedModel, newBatch);
+    }
   }
 
   private void prepare() {
@@ -74,6 +109,7 @@ public class RenderManager {
   }
 
   public void cleanUp() {
+    entityShader.cleanUp();
     terrainShader.cleanUp();
   }
 

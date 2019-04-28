@@ -4,6 +4,7 @@ import camera.Camera;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import org.lwjgl.util.vector.Vector4f;
 
 public class Maths {
 
@@ -42,5 +43,50 @@ public class Maths {
 
   public static float clamp(float value, float min, float max) {
     return Math.max(Math.min(value, max), min);
+  }
+
+  public static Vector3f sumTwoVectors(Vector3f firstVector, Vector3f secondVector) {
+    Vector3f sumVector = new Vector3f();
+    sumVector.x = firstVector.x + secondVector.x;
+    sumVector.y = firstVector.y + secondVector.y;
+    sumVector.z = firstVector.z + secondVector.z;
+    return sumVector;
+  }
+
+  public static Vector3f subtractTwoVectors(Vector3f subtracted, Vector3f subtractor) {
+    Vector3f sumVector = new Vector3f();
+    sumVector.x = subtracted.x - subtractor.x;
+    sumVector.y = subtracted.y - subtractor.y;
+    sumVector.z = subtracted.z - subtractor.z;
+    return sumVector;
+  }
+
+  public static Vector3f multiplyVectorByScale(Vector3f vector, float scale) {
+    Vector3f multiplyVector = new Vector3f();
+    multiplyVector.x = vector.x * scale;
+    multiplyVector.y = vector.y * scale;
+    multiplyVector.z = vector.z * scale;
+    return multiplyVector;
+  }
+
+  public static Vector3f rotateVector(Vector3f vector, float rotation) {
+    Vector4f toTransform = new Vector4f(vector.x, vector.y, vector.z, 1);
+    Matrix4f matrix = new Matrix4f();
+    Matrix4f.rotate((float) Math.toRadians(0), new Vector3f(1, 0, 0), matrix, matrix);
+    Matrix4f.rotate((float) Math.toRadians(rotation), new Vector3f(0, 1, 0), matrix, matrix);
+    Matrix4f.rotate((float) Math.toRadians(0), new Vector3f(0, 0, 1), matrix, matrix);
+    Vector4f rotated = Matrix4f.transform(matrix, toTransform, toTransform);
+    return new Vector3f(rotated.x, rotated.y, rotated.z);
+  }
+
+  public static Vector3f normalizeVector(Vector3f vectorToBeNormalized) {
+    Vector3f vector = new Vector3f(vectorToBeNormalized.x, vectorToBeNormalized.y, vectorToBeNormalized.z);
+    float length = (float) Math.sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
+    if (length > 0) {
+      vector.x /= length;
+      vector.y /= length;
+      vector.z /= length;
+    }
+    return vector;
   }
 }

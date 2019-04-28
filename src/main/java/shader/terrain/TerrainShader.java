@@ -1,4 +1,4 @@
-package terrain;
+package shader.terrain;
 
 import camera.Camera;
 import camera.DirectionalLight;

@@ -4,12 +4,15 @@ import generator.ColorGenerator;
 import generator.HeightGenerator;
 import loader.Loader;
 import model.RawModel;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import toolbox.Color;
+import toolbox.Maths;
 
 public class Terrain {
   private static final float SIZE = 4000;
   private final int VERTEX_COUNT = 256;
+  float[][] heights = new float[VERTEX_COUNT][VERTEX_COUNT];
   private RawModel model;
 
   public Terrain(Loader loader) {
@@ -21,16 +24,16 @@ public class Terrain {
   }
 
   private Vector3f calculateNormal(int x, int z) {
-    float heightL = getHeight(x - 1, z);
-    float heightR = getHeight(x + 1, z);
-    float heightD = getHeight(x, z - 1);
-    float heightU = getHeight(x, z + 1);
+    float heightL = generateHeight(x - 1, z);
+    float heightR = generateHeight(x + 1, z);
+    float heightD = generateHeight(x, z - 1);
+    float heightU = generateHeight(x, z + 1);
     Vector3f normal = new Vector3f(heightL - heightR, 2f, heightD - heightU);
     normal.normalise();
     return normal;
   }
 
-  private float getHeight(int x, int z) {
+  private float generateHeight(int x, int z) {
     return HeightGenerator.generateHeight(x, z);
   }
 
@@ -41,7 +44,6 @@ public class Terrain {
   private RawModel generateTerrain(Loader loader) {
 
     int count = VERTEX_COUNT * VERTEX_COUNT;
-    float[][] heights = new float[VERTEX_COUNT][VERTEX_COUNT];
     float[] vertices = new float[count * 3];
     float[] normals = new float[count * 3];
     float[] colors = new float[count * 3];
@@ -50,7 +52,7 @@ public class Terrain {
     for (int i = 0; i < VERTEX_COUNT; i++) {
       for (int j = 0; j < VERTEX_COUNT; j++) {
         vertices[vertexPointer * 3] = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;
-        float height = getHeight(j,i);
+        float height = generateHeight(j, i);
         vertices[vertexPointer * 3 + 1] = height;
         heights[j][i] = height;
         vertices[vertexPointer * 3 + 2] = (float) i / ((float) VERTEX_COUNT - 1) * SIZE;
@@ -91,5 +93,34 @@ public class Terrain {
       }
     }
     return loader.loadTerrainToVAO(vertices, indexes, colors, normals);
+  }
+
+  public float getHeight(float worldX, float worldZ) {
+    float gridSquareSize = SIZE / ((float) heights.length - 1);
+    int gridX = (int) Math.floor((worldX / gridSquareSize));
+    int gridZ = (int) Math.floor((worldZ / gridSquareSize));
+
+    if (gridX >= (heights.length - 1) || gridZ >= (heights.length - 1) || gridX < 0 || gridZ < 0) {
+      return 0;
+    }
+
+    float coordX = (worldX % gridSquareSize) / gridSquareSize;
+    float coordZ = (worldZ % gridSquareSize) / gridSquareSize;
+
+    float height;
+
+    if (coordX <= (1 - coordZ)) {
+      height = Maths
+              .barryCentric(new Vector3f(0, heights[gridX][gridZ], 0), new Vector3f(1,
+                      heights[gridX + 1][gridZ], 0), new Vector3f(0,
+                      heights[gridX][gridZ + 1], 1), new Vector2f(coordX, coordZ));
+    } else {
+      height = Maths
+              .barryCentric(new Vector3f(1, heights[gridX + 1][gridZ], 0), new Vector3f(1,
+                      heights[gridX + 1][gridZ + 1], 1), new Vector3f(0,
+                      heights[gridX][gridZ + 1], 1), new Vector2f(coordX, coordZ));
+    }
+
+    return height;
   }
 }
