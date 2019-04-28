@@ -1,7 +1,7 @@
 package generator;
 
 import toolbox.Color;
-import toolbox.Maths;
+import toolbox.math.Maths;
 
 public class ColorGenerator {
 

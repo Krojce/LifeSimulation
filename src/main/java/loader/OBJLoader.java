@@ -1,6 +1,5 @@
-package toolbox;
+package loader;
 
-import loader.Loader;
 import model.RawModel;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;

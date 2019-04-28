@@ -1,7 +1,6 @@
 package render;
 
-import componentArchitecture.EntityManager;
-import components.TransformationComponent;
+import entity.BaseEntity;
 import model.RawModel;
 import model.TexturedModel;
 import org.lwjgl.opengl.GL11;
@@ -11,34 +10,32 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import shader.entity.EntityShader;
-import toolbox.Maths;
+import toolbox.math.Maths;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class EntityRenderer {
     private EntityShader shader;
-    private EntityManager entityManager;
 
-    public EntityRenderer(EntityShader shader, Matrix4f projectionMatrix, EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public EntityRenderer(EntityShader shader, Matrix4f projectionMatrix) {
         this.shader = shader;
         shader.start();
         shader.loadProjectionMatrix(projectionMatrix);
         shader.stop();
     }
 
-    public void render(Map<TexturedModel, List<UUID>> entities) {
+    public void render(Map<TexturedModel, List<BaseEntity>> entities) {
         for (TexturedModel model : entities.keySet()) {
             prepareTexturedModel(model);
-            List<UUID> batch = entities.get(model);
-            for (UUID entity : batch) {
+            List<BaseEntity> batch = entities.get(model);
+            for (BaseEntity entity : batch) {
                 prepareInstance(entity);
                 GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
             }
             unbindTexturedModel();
         }
+
     }
 
     public void prepareTexturedModel(TexturedModel texturedModel) {
@@ -61,11 +58,10 @@ public class EntityRenderer {
         GL30.glBindVertexArray(0);
     }
 
-    private void prepareInstance(UUID entity) {
-        TransformationComponent transComp = entityManager.getComponent(entity, TransformationComponent.class);
-        Vector3f position = new Vector3f(transComp.getPosition().x, transComp.getPosition().y, transComp.getPosition().z);
-        Matrix4f transformationMatrix = Maths.createTransformationMatrix(position, 0,
-                transComp.getOrientationY(), 0, transComp.getScale());
+    private void prepareInstance(BaseEntity entity) {
+        Vector3f rotation = entity.getRotation();
+        Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), rotation.x,
+                rotation.y, rotation.z, entity.getScale());
         shader.loadTransformationMatrix(transformationMatrix);
     }
 }

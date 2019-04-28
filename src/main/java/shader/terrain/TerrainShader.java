@@ -5,7 +5,7 @@ import camera.DirectionalLight;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import shader.ShaderProgram;
-import toolbox.Maths;
+import toolbox.math.Maths;
 
 import static manager.RenderManager.SKY_COLOR;
 

@@ -7,7 +7,7 @@ import model.RawModel;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import toolbox.Color;
-import toolbox.Maths;
+import toolbox.math.Maths;
 
 public class Terrain {
   private static final float SIZE = 4000;

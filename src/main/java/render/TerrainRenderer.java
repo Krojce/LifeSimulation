@@ -8,7 +8,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import shader.terrain.TerrainShader;
 import terrain.Terrain;
-import toolbox.Maths;
+import toolbox.math.Maths;
 
 public class TerrainRenderer {
 

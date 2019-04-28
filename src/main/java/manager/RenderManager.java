@@ -2,7 +2,7 @@ package manager;
 
 import camera.Camera;
 import camera.DirectionalLight;
-import componentArchitecture.EntityManager;
+import entity.BaseEntity;
 import model.TexturedModel;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -16,14 +16,17 @@ import shader.entity.EntityShader;
 import shader.terrain.TerrainShader;
 import terrain.Terrain;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RenderManager {
 
   private static final float FOV = 70;
   private static final float NEAR_PLANE = 0.1f;
-  public static final Vector4f SKY_COLOR = new Vector4f(0.4f, 0.6f, 0.9f, 0f);
   private static final float FAR_PLANE = 3000f;
+  public static final Vector4f SKY_COLOR = new Vector4f(0.4f, 0.6f, 0.9f, 0f);
 
   private Matrix4f projectionMatrix;
 
@@ -31,22 +34,23 @@ public class RenderManager {
   private TerrainShader terrainShader = new TerrainShader();
   private Terrain terrain;
 
-  private EntityManager entityManager;
-    private EntityShader entityShader = new EntityShader();
+  private EntityShader entityShader = new EntityShader();
   private EntityRenderer entityRenderer;
-  private Map<TexturedModel, List<UUID>> entities = new HashMap<TexturedModel, List<UUID>>();
+
+  private Map<TexturedModel, List<BaseEntity>> entities = new HashMap<TexturedModel, List<BaseEntity>>();
 
   public RenderManager() {
     GL11.glEnable(GL11.GL_CULL_FACE);
     GL11.glCullFace(GL11.GL_BACK);
     createProjectionMatrix();
     terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
-    entityRenderer = new EntityRenderer(entityShader, projectionMatrix, entityManager);
+    entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
   }
 
   public void render(Camera camera, DirectionalLight light) {
     prepare();
     renderTerrain(camera, light);
+    renderEntities(camera, light);
   }
 
   private void renderTerrain(Camera camera, DirectionalLight light) {
@@ -69,15 +73,17 @@ public class RenderManager {
     this.terrain = terrain;
   }
 
-  public void proccessEntity(UUID entity, TexturedModel texturedModel) {
-    List<UUID> batch = entities.get(texturedModel);
+  public void processEntity(BaseEntity entity) {
+    TexturedModel entityModel = entity.getTexturedModel();
+    List<BaseEntity> batch = entities.get(entityModel);
     if (batch != null) {
       batch.add(entity);
     } else {
-      List<UUID> newBatch = new ArrayList<UUID>();
+      List<BaseEntity> newBatch = new ArrayList<BaseEntity>();
       newBatch.add(entity);
-      entities.put(texturedModel, newBatch);
+      entities.put(entityModel, newBatch);
     }
+
   }
 
   private void prepare() {
@@ -113,4 +119,7 @@ public class RenderManager {
     terrainShader.cleanUp();
   }
 
+  public Matrix4f getProjectionMatrix() {
+    return projectionMatrix;
+  }
 }

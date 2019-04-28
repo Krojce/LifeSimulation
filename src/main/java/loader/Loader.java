@@ -36,6 +36,13 @@ public class Loader {
     return new RawModel(vaoID, indexes.length);
   }
 
+  public RawModel loadToVAO(float[] positions) {
+    int vaoID = createVAO();
+    storeDataInAttributeList(0, 2, positions);
+    unbindVAO();
+    return new RawModel(vaoID, positions.length / 2);
+  }
+
   public RawModel loadTerrainToVAO(float[] positions, int[] indexes, float[] colors, float[] normals) {
     int vaoID = createVAO();
     bindIndexesVBO(indexes);

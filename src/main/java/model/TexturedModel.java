@@ -1,6 +1,6 @@
 package model;
 
-import toolbox.ModelTexture;
+import textures.ModelTexture;
 
 public class TexturedModel {
 

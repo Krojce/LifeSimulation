@@ -5,7 +5,7 @@ import camera.DirectionalLight;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import shader.ShaderProgram;
-import toolbox.Maths;
+import toolbox.math.Maths;
 
 import static manager.RenderManager.SKY_COLOR;
 
@@ -47,7 +47,6 @@ public class EntityShader extends ShaderProgram {
 
     @Override
     protected void bindAttributes() {
-        //we bind the position/texuteCoords from a VAO to be used by the shader
         super.bindAttribute(0, "position");
         super.bindAttribute(1, "textureCoords");
         super.bindAttribute(2, "normal");
@@ -62,7 +61,7 @@ public class EntityShader extends ShaderProgram {
         loadSkyColor();
     }
 
-    public void loadSkyColor() {
+    private void loadSkyColor() {
         super.loadVector3f(skyColor, new Vector3f(SKY_COLOR.x, SKY_COLOR.y, SKY_COLOR.z));
     }
 
