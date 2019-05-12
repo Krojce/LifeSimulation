@@ -3,13 +3,13 @@ package main;
 import camera.Camera;
 import camera.DirectionalLight;
 import camera.Target;
-import entity.template.BaseEntity;
 import factory.EntityFactory;
 import gui.ButtonPanel;
 import loader.Loader;
 import manager.DisplayManager;
 import manager.EntityManager;
 import manager.RenderManager;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 import render.GuiRenderer;
@@ -58,9 +58,10 @@ public class mainGameLoop {
                 new Vector3f(1.0f, 1.0f, 1.0f),
                 new Color(1.0f, 1.0f, 1.0f));
 
-        RenderManager renderer = new RenderManager(loader);
-        EntityFactory entityFactory = new EntityFactory(loader);
         EntityManager entityManager = new EntityManager();
+        RenderManager renderer = new RenderManager(loader, entityManager);
+        EntityFactory entityFactory = new EntityFactory(loader);
+
 
         Terrain terrain = new Terrain(loader);
         Camera camera = new Camera(new Target(new Vector3f(Terrain.getSIZE() / 2, 50, Terrain.getSIZE() / 2)));
@@ -68,7 +69,7 @@ public class mainGameLoop {
 
         Random random = new Random();
 
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 50; i++) {
             float randomX = random.nextFloat() * Terrain.getSIZE();
             float randomZ = random.nextFloat() * Terrain.getSIZE();
             entityManager.addEntity(entityFactory.createEntity(new Vector3f(randomX, 0, randomZ), "tree"));
@@ -82,9 +83,9 @@ public class mainGameLoop {
         Timer timer = new Timer();
 
         while (!Display.isCloseRequested()) {
-            System.out.println(Timer.getCurrentTime());
-            for (BaseEntity entity : entityManager.getEntities()) {
-                renderer.processEntity(entity);
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_R)) {
+                entityManager.clearWorld();
             }
 
             buttonPanel.update();

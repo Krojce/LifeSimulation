@@ -5,10 +5,10 @@ import org.lwjgl.util.vector.Vector3f;
 import terrain.Terrain;
 
 public abstract class BaseEntity implements EntityUpdate {
-    private TexturedModel texturedModel;
-    private Vector3f position;
-    private Vector3f rotation;
-    private float scale;
+    protected TexturedModel texturedModel;
+    protected Vector3f position;
+    protected Vector3f rotation;
+    protected float scale;
 
     public BaseEntity(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale) {
         this.texturedModel = texturedModel;
@@ -31,5 +31,21 @@ public abstract class BaseEntity implements EntityUpdate {
 
     public float getScale() {
         return scale;
+    }
+
+    public void setTexturedModel(TexturedModel texturedModel) {
+        this.texturedModel = texturedModel;
+    }
+
+    public void setPosition(Vector3f position) {
+        this.position = position;
+    }
+
+    public void setRotation(Vector3f rotation) {
+        this.rotation = rotation;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 }

@@ -97,4 +97,11 @@ public class Maths {
         }
         return vector;
     }
+
+    public static Vector3f clampVectorToValue(Vector3f vector, float min, float max) {
+        float x = Math.max(min, Math.min(max, vector.x));
+        float y = Math.max(min, Math.min(max, vector.y));
+        float z = Math.max(min, Math.min(max, vector.z));
+        return new Vector3f(x, y, z);
+    }
 }

@@ -2,9 +2,7 @@ package manager;
 
 import camera.Camera;
 import camera.DirectionalLight;
-import entity.template.BaseEntity;
 import loader.Loader;
-import model.TexturedModel;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -17,11 +15,6 @@ import render.TerrainRenderer;
 import shader.entity.EntityShader;
 import shader.terrain.TerrainShader;
 import terrain.Terrain;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class RenderManager {
 
@@ -40,15 +33,16 @@ public class RenderManager {
 
     private SkyboxRenderer skyboxRenderer;
 
-    private Map<TexturedModel, List<BaseEntity>> entities = new HashMap<TexturedModel, List<BaseEntity>>();
+    private EntityManager entityManager;
 
-    public RenderManager(Loader loader) {
+    public RenderManager(Loader loader, EntityManager entityManager) {
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
         createProjectionMatrix();
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
         entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
         skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
+        this.entityManager = entityManager;
     }
 
     public void render(Camera camera, DirectionalLight light) {
@@ -74,25 +68,12 @@ public class RenderManager {
         entityShader.start();
         entityShader.loadLight(light);
         entityShader.loadViewMatrix(camera);
-        entityRenderer.render(entities);
+        entityRenderer.render(entityManager.getEntities());
         entityShader.stop();
     }
 
     public void processTerrain(Terrain terrain) {
         this.terrain = terrain;
-    }
-
-    public void processEntity(BaseEntity entity) {
-        TexturedModel entityModel = entity.getTexturedModel();
-        List<BaseEntity> batch = entities.get(entityModel);
-        if (batch != null) {
-            batch.add(entity);
-        } else {
-            List<BaseEntity> newBatch = new ArrayList<BaseEntity>();
-            newBatch.add(entity);
-            entities.put(entityModel, newBatch);
-        }
-
     }
 
     private void prepare() {
@@ -126,6 +107,7 @@ public class RenderManager {
     public void cleanUp() {
         entityShader.cleanUp();
         terrainShader.cleanUp();
+        skyboxRenderer.cleanShader();
     }
 
     public Matrix4f getProjectionMatrix() {
