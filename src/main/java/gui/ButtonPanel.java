@@ -20,7 +20,8 @@ public class ButtonPanel {
     private float ratioX = (float) 1024 / Display.getWidth();
     private final float width = ratioX / 2;
     private String[] guiNames = {"deer-gui", "bear-gui", "boar-gui", "rabbit-gui", "tree-gui"};
-    private String[] entityNames = {"DEER", "BEAR", "BOAR", "RABBIT", "TREE"};
+    private String[] entityNames = {"deer", "bear", "boar", "rabbit", "tree"};
+    private String activeEntity = "deer";
 
     public ButtonPanel(MyMouse mouse, Loader loader) {
         this.mouse = mouse;
@@ -32,7 +33,7 @@ public class ButtonPanel {
         for (int i = 0; i < guiNames.length; i++) {
             float scaleX = width / guiNames.length;
             float scaleY = height / guiNames.length;
-            Vector2f position = new Vector2f(1 - scaleY - padding - 2 * i * scaleY - i * padding, 1 - scaleX - padding);
+            Vector2f position = new Vector2f(1.3f * i * scaleY - 1 + scaleX + padding, scaleY + padding - 1);
             GuiTexture gui = new GuiTexture(loader.loadTexture(guiNames[i]), position, new Vector2f(scaleX, scaleY));
             Button button = new Button(gui, padding, mouse, entityNames[i]);
             buttons.add(button);
@@ -40,13 +41,17 @@ public class ButtonPanel {
         }
     }
 
-    public void isOnButton() {
+    public void update() {
         for (Button button : buttons) {
             button.update();
             if (button.isOnButton()) {
-                System.out.println(button.getName());
+                activeEntity = button.getName();
             }
         }
+    }
+
+    public String getActiveEntity() {
+        return activeEntity;
     }
 
     public List<GuiTexture> getGuiTextures() {

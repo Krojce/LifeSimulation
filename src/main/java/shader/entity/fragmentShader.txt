@@ -7,6 +7,17 @@ out vec4 outColor;
 
 uniform sampler2D textureSampler;
 
+const float fogDensity = 0.001;
+const vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
+const vec4 skyColor = vec4(0.0, 0.0, 0.0, 1.0);
+
 void main(void){
-	outColor = texture(textureSampler, passTextureCoords);
+float distance = gl_FragCoord.z / gl_FragCoord.w;
+    float fogFactor = 1.0 /exp(distance * fogDensity);
+    fogFactor = clamp(fogFactor, 0.0, 1.0);
+	vec4 finalColor = mix(skyColor, texture(textureSampler, passTextureCoords), fogFactor);
+	outColor = finalColor;
+	if(fogFactor < 0.0) {
+	    outColor = vec4(1 - fogFactor, 0.0, 0.0, 0.0);
+	}
 }

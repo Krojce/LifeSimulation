@@ -19,6 +19,10 @@ public class DirectionalLight {
         this.color = color;
     }
 
+    public void update() {
+
+    }
+
     public Vector3f getDirection() {
         return direction;
     }

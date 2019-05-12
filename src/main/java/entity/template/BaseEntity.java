@@ -1,9 +1,10 @@
-package entity;
+package entity.template;
 
 import model.TexturedModel;
 import org.lwjgl.util.vector.Vector3f;
+import terrain.Terrain;
 
-public abstract class BaseEntity {
+public abstract class BaseEntity implements EntityUpdate {
     private TexturedModel texturedModel;
     private Vector3f position;
     private Vector3f rotation;
@@ -11,7 +12,7 @@ public abstract class BaseEntity {
 
     public BaseEntity(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale) {
         this.texturedModel = texturedModel;
-        this.position = position;
+        this.position = new Vector3f(position.x, Terrain.getHeight(position.x, position.z), position.z);
         this.rotation = rotation;
         this.scale = scale;
     }

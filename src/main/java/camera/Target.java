@@ -12,6 +12,10 @@ public class Target {
 
     private Vector3f position;
     private float rotY;
+    private boolean isMovable = true;
+
+    private Vector3f CAMERA_ONE = new Vector3f(400, 50, 400);
+    private Vector3f CAMERA_TWO = new Vector3f(200, 50, 200);
 
     public Target(Vector3f initialPosition) {
         this.position = initialPosition;
@@ -19,36 +23,53 @@ public class Target {
     }
 
     public void moveTarget() {
-        float speed = 0;
-        float sideSpeed = 0;
-        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-            sideSpeed = -SPEED;
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-            sideSpeed = SPEED;
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            speed = SPEED;
-        } else if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-            speed = -SPEED;
+
+        while (Keyboard.next()) {
+            if (Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_S) {
+                isMovable = !isMovable;
+            }
         }
 
-        Vector2f change = calculatePositionChange();
-
-        if (change.x != 0 || change.y != 0) {
-            speed = change.y * SPEED;
-            sideSpeed = change.x * SPEED;
+        if (Keyboard.isKeyDown(Keyboard.KEY_1)) {
+            position = CAMERA_ONE;
         }
 
-        float distance = speed * DisplayManager.getFrameTimeSeconds();
-        float sideDistance = sideSpeed * DisplayManager.getFrameTimeSeconds();
+        if (Keyboard.isKeyDown(Keyboard.KEY_2)) {
+            position = CAMERA_TWO;
+        }
+
+        if (isMovable) {
+            float speed = 0;
+            float sideSpeed = 0;
+            if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+                sideSpeed = -SPEED;
+            } else if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+                sideSpeed = SPEED;
+            }
+            if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+                speed = SPEED;
+            } else if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+                speed = -SPEED;
+            }
+
+            Vector2f change = calculatePositionChange();
+
+            if (change.x != 0 || change.y != 0) {
+                speed = change.y * SPEED;
+                sideSpeed = change.x * SPEED;
+            }
+
+            float distance = speed * DisplayManager.getFrameTimeSeconds();
+            float sideDistance = sideSpeed * DisplayManager.getFrameTimeSeconds();
 
 
-        float dx = (float) (distance * Math.sin(Math.toRadians(getRotY())));
-        float dz = (float) (distance * Math.cos(Math.toRadians(getRotY())));
+            float dx = (float) (distance * Math.sin(Math.toRadians(getRotY())));
+            float dz = (float) (distance * Math.cos(Math.toRadians(getRotY())));
 
-        float sideDx = (float) (sideDistance * Math.sin(Math.toRadians(getRotY() + 90)));
-        float sideDz = (float) (sideDistance * Math.cos(Math.toRadians(getRotY() + 90)));
-        increasePosition(dx + sideDx, 0, dz + sideDz);
+            float sideDx = (float) (sideDistance * Math.sin(Math.toRadians(getRotY() + 90)));
+            float sideDz = (float) (sideDistance * Math.cos(Math.toRadians(getRotY() + 90)));
+            increasePosition(dx + sideDx, 0, dz + sideDz);
+        }
     }
 
     public float calculateRotationChange() {

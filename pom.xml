@@ -30,6 +30,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/main/resources/slick-util.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.png.decoder</groupId>
+            <artifactId>PNGDecoder</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/PNGDecoder.jar</systemPath>
+        </dependency>
     </dependencies>
 
 </project>

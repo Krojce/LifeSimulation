@@ -1,6 +1,6 @@
 package render;
 
-import entity.BaseEntity;
+import entity.template.BaseEntity;
 import model.RawModel;
 import model.TexturedModel;
 import org.lwjgl.opengl.GL11;
