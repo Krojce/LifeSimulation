@@ -15,6 +15,7 @@ import org.lwjgl.util.vector.Vector3f;
 import render.GuiRenderer;
 import terrain.Terrain;
 import toolbox.Color;
+import toolbox.Timer;
 import toolbox.input.MyMouse;
 import toolbox.input.Raycast;
 
@@ -78,7 +79,10 @@ public class mainGameLoop {
         GuiRenderer guiRenderer = new GuiRenderer(loader);
         ButtonPanel buttonPanel = new ButtonPanel(mouse, loader);
 
+        Timer timer = new Timer();
+
         while (!Display.isCloseRequested()) {
+            System.out.println(Timer.getCurrentTime());
             for (BaseEntity entity : entityManager.getEntities()) {
                 renderer.processEntity(entity);
             }
@@ -100,6 +104,7 @@ public class mainGameLoop {
             renderer.render(camera, sun);
             guiRenderer.render(buttonPanel);
             DisplayManager.updateDisplay();
+            timer.update();
         }
 
         renderer.cleanUp();
