@@ -22,7 +22,7 @@ import toolbox.input.Raycast;
 import java.lang.reflect.Field;
 import java.util.Random;
 
-public class mainGameLoop {
+public class Main {
 
     private static void setup(String pathToAdd) {
         Field usrPathsField;
@@ -54,8 +54,8 @@ public class mainGameLoop {
         DirectionalLight sun = new DirectionalLight(
                 new Vector3f(-0.2f, -1.0f, -0.3f),
                 new Vector3f(0.2f, 0.2f, 0.2f),
-                new Vector3f(0.5f, 0.5f, 0.5f),
-                new Vector3f(1.0f, 1.0f, 1.0f),
+                new Vector3f(0.2f, 0.2f, 0.2f),
+                new Vector3f(0.2f, 0.2f, 0.2f),
                 new Color(1.0f, 1.0f, 1.0f));
 
         EntityManager entityManager = new EntityManager();
@@ -93,6 +93,7 @@ public class mainGameLoop {
             camera.move();
             mouse.update();
             raycast.update();
+            sun.update();
 
             if (mouse.isLeftClick()) {
                 Vector3f position = raycast.getCurrentTerrainPoint();

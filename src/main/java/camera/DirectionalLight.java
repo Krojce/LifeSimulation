@@ -2,6 +2,8 @@ package camera;
 
 import org.lwjgl.util.vector.Vector3f;
 import toolbox.Color;
+import toolbox.Timer;
+import toolbox.math.Maths;
 
 public class DirectionalLight {
 
@@ -20,7 +22,20 @@ public class DirectionalLight {
     }
 
     public void update() {
-
+        float currentTime = Timer.getCurrentTime();
+        if (currentTime < 5) {
+            ambient = Maths.changeVectorByValues(ambient, 0.001f);
+            ambient = Maths.clampVectorToValue(ambient, 0, 0.01f);
+        } else if (currentTime >= 5 && currentTime < 8) {
+            ambient = Maths.changeVectorByValues(ambient, 0.002f);
+            ambient = Maths.clampVectorToValue(ambient, 0, 0.1f);
+        } else if (currentTime >= 8 && currentTime < 21) {
+            ambient = Maths.changeVectorByValues(ambient, 0.001f);
+            ambient = Maths.clampVectorToValue(ambient, 0, 0.4f);
+        } else {
+            ambient = Maths.changeVectorByValues(ambient, -0.003f);
+            ambient = Maths.clampVectorToValue(ambient, 0, 0.4f);
+        }
     }
 
     public Vector3f getDirection() {

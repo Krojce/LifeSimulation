@@ -104,4 +104,8 @@ public class Maths {
         float z = Math.max(min, Math.min(max, vector.z));
         return new Vector3f(x, y, z);
     }
+
+    public static Vector3f changeVectorByValues(Vector3f vector, float value) {
+        return new Vector3f(vector.x + value, vector.y + value, vector.z + value);
+    }
 }

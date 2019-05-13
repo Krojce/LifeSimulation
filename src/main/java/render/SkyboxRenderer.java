@@ -97,16 +97,16 @@ public class SkyboxRenderer {
             texture2 = nightTexture;
             blendFactor = 1;
         } else if (currentTime >= 5 && currentTime < 8) {
-            texture1 = texture;
-            texture2 = nightTexture;
+            texture1 = nightTexture;
+            texture2 = texture;
             blendFactor = (currentTime - 5) / (8 - 5);
         } else if (currentTime >= 8 && currentTime < 21) {
             texture1 = texture;
             texture2 = texture;
             blendFactor = 1;
         } else {
-            texture1 = nightTexture;
-            texture2 = texture;
+            texture1 = texture;
+            texture2 = nightTexture;
             blendFactor = (currentTime - 21) / (24 - 21);
         }
 

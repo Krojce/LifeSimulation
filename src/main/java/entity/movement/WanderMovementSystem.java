@@ -1,6 +1,7 @@
 package entity.movement;
 
 import org.lwjgl.util.vector.Vector3f;
+import terrain.Terrain;
 import toolbox.math.Maths;
 
 import java.util.Random;
@@ -25,7 +26,33 @@ public class WanderMovementSystem {
         this.wanderRingDistance = wanderRingDistance;
     }
 
-    public Vector3f seek(Vector3f position, Vector3f velocity) {
+    public Vector3f move(Vector3f position) {
+        acceleration = seek(position, acceleration);
+        velocity = Maths.sumTwoVectors(acceleration, velocity);
+
+        if (velocity.length() > maxSpeed) {
+            velocity = Maths.clampVectorToValue(velocity, 0, maxSpeed);
+        }
+
+        position = Maths.sumTwoVectors(position, velocity);
+        position = Maths.clampVectorToValue(position, 0, Terrain.getSIZE());
+        return new Vector3f(position.x, Terrain.getHeight(position.x, position.z), position.z);
+    }
+
+    public Vector3f rotate(Vector3f rotation) {
+        float angle = (float) Math.toDegrees(Vector3f.angle(
+                new Vector3f(0, 0, 800),
+                velocity
+        ));
+
+        if (velocity.x < 0) {
+            angle *= -1;
+        }
+
+        return new Vector3f(rotation.x, angle, rotation.z);
+    }
+
+    private Vector3f seek(Vector3f position, Vector3f velocity) {
         Vector3f target = wandering(position, velocity);
         Vector3f desired = Maths.multiplyVectorByScale(Maths.normalizeVector(Maths.subtractTwoVectors(target, position)), maxSpeed);
         Vector3f steer = Maths.subtractTwoVectors(desired, velocity);

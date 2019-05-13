@@ -49,11 +49,11 @@ public class EntityFactory {
     }
 
     private Bear createBear(Vector3f position) {
-        return new Bear(texturedModels.get("bear"), position, new Vector3f(0, 0, 0), 2f);
+        return new Bear(texturedModels.get("bear"), position, new Vector3f(0, 0, 0), 2.5f);
     }
 
     private Tree createTree(Vector3f position) {
-        return new Tree(texturedModels.get("tree"), position, new Vector3f(0, 0, 0), 2f);
+        return new Tree(texturedModels.get("tree"), position, new Vector3f(0, 0, 0), 4f);
     }
 
     private Deer createDeer(Vector3f position) {
@@ -61,11 +61,11 @@ public class EntityFactory {
     }
 
     private Rabbit createRabbit(Vector3f position) {
-        return new Rabbit(texturedModels.get("rabbit"), position, new Vector3f(0, 0, 0), 2f);
+        return new Rabbit(texturedModels.get("rabbit"), position, new Vector3f(0, 0, 0), 0.5f);
     }
 
     private Boar createBoar(Vector3f position) {
-        return new Boar(texturedModels.get("boar"), position, new Vector3f(0, 0, 0), 2f);
+        return new Boar(texturedModels.get("boar"), position, new Vector3f(0, 0, 0), 1f);
     }
 
     private TexturedModel createTexturedModel(String name) {
