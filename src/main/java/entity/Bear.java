@@ -10,7 +10,7 @@ public class Bear extends BaseEntity {
 
     public Bear(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale) {
         super(texturedModel, position, rotation, scale);
-        this.wanderMovementSystem = new WanderMovementSystem(1.5f, 0.25f, 80, 10);
+        this.wanderMovementSystem = new WanderMovementSystem(1.4f, 0.25f, 80, 10);
     }
 
     public void update() {
