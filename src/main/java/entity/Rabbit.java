@@ -4,6 +4,7 @@ import entity.movement.WanderMovementSystem;
 import entity.template.BaseEntity;
 import model.TexturedModel;
 import org.lwjgl.util.vector.Vector3f;
+import toolbox.Timer;
 
 public class Rabbit extends BaseEntity {
     private WanderMovementSystem wanderMovementSystem;
@@ -14,7 +15,22 @@ public class Rabbit extends BaseEntity {
     }
 
     public void update() {
-        position = wanderMovementSystem.move(position);
-        rotation = wanderMovementSystem.rotate(rotation);
+        move();
+    }
+
+    private void move() {
+        float currentTime = Timer.getCurrentTime();
+
+        if (currentTime > 5 && currentTime < 21) {
+            rotation = new Vector3f(0, 0, 0);
+            position = wanderMovementSystem.move(position);
+            rotation = wanderMovementSystem.rotate(rotation);
+        } else {
+            sleep();
+        }
+    }
+
+    private void sleep() {
+        rotation = new Vector3f(0, 0, 90);
     }
 }
