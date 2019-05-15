@@ -3,6 +3,8 @@ package main;
 import camera.Camera;
 import camera.Target;
 import factory.EntityFactory;
+import font.FontType;
+import font.GUIText;
 import gui.ButtonPanel;
 import lights.DirectionalLight;
 import lights.Light;
@@ -11,8 +13,10 @@ import loader.Loader;
 import manager.DisplayManager;
 import manager.EntityManager;
 import manager.RenderManager;
+import manager.TextManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import render.GuiRenderer;
 import resources.Rock;
@@ -23,6 +27,7 @@ import toolbox.input.MyMouse;
 import toolbox.picking.EntityPicker;
 import toolbox.picking.TerrainCollisionDetector;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +66,11 @@ public class Main {
         Terrain terrain = new Terrain(loader);
         List<Light> lights = new ArrayList<Light>();
         List<Rock> rocks = new ArrayList<Rock>();
+
+        TextManager textManager = new TextManager(loader);
+        FontType font = new FontType(loader.loadTexture("verdana"), new File("src/main/java/resources/verdana.fnt"));
+        GUIText text = new GUIText("NATURE SIMULATION", 2f, font, new Vector2f(0f, 0.93f), 1f, true);
+        text.setColor(1, 1, 1);
 
         DirectionalLight sun = new DirectionalLight(
                 new Vector3f(0.2f, 0.2f, 0.2f),
@@ -139,10 +149,12 @@ public class Main {
             renderer.processTerrain(terrain);
             renderer.render(camera, lights);
             guiRenderer.render(buttonPanel);
+            textManager.render();
             DisplayManager.updateDisplay();
             timer.update();
         }
 
+        textManager.cleanUp();
         renderer.cleanUp();
         loader.cleanUp();
         DisplayManager.closeDisplay();

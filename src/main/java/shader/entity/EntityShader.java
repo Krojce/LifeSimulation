@@ -3,15 +3,13 @@ package shader.entity;
 import camera.Camera;
 import lights.DirectionalLight;
 import lights.Light;
+import lights.PointLight;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 import shader.ShaderProgram;
 import toolbox.math.Maths;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static manager.RenderManager.SKY_COLOR;
 
 public class EntityShader extends ShaderProgram {
 
@@ -19,18 +17,24 @@ public class EntityShader extends ShaderProgram {
     private static final String FRAGMENT_FILE = "src/main/java/shader/entity/fragmentShader.txt";
 
     private static final int DIRECTIONAL = 2;
+    private static final int POINT = 10;
 
     private int locationTransformationMatrix;
     private int locationProjectionMatrix;
     private int locationViewMatrix;
-
-    private int skyColor;
 
     //Directional
     private int[] directionalLightDirection;
     private int[] directionalLightAmbient;
     private int[] directionalLightDiffuse;
     private int[] directionalLightColor;
+
+    //Point
+    private int[] pointLightPosition;
+    private int[] pointLightAmbient;
+    private int[] pointLightDiffuse;
+    private int[] pointLightColor;
+    private int[] pointLightAttenuation;
 
     public EntityShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -42,8 +46,11 @@ public class EntityShader extends ShaderProgram {
         locationProjectionMatrix = super.getUniformLocation("projectionMatrix");
         locationViewMatrix = super.getUniformLocation("viewMatrix");
 
-        skyColor = super.getUniformLocation("skyColor");
+        getDirectionalLightsUniformLocations();
+        getPointLightsUniformLocations();
+    }
 
+    private void getDirectionalLightsUniformLocations() {
         directionalLightDirection = new int[DIRECTIONAL];
         directionalLightAmbient = new int[DIRECTIONAL];
         directionalLightDiffuse = new int[DIRECTIONAL];
@@ -57,6 +64,22 @@ public class EntityShader extends ShaderProgram {
         }
     }
 
+    private void getPointLightsUniformLocations() {
+        pointLightPosition = new int[POINT];
+        pointLightAmbient = new int[POINT];
+        pointLightDiffuse = new int[POINT];
+        pointLightColor = new int[POINT];
+        pointLightAttenuation = new int[POINT];
+
+        for (int i = 0; i < POINT; i++) {
+            pointLightPosition[i] = super.getUniformLocation("pointLightPosition[" + i + "]");
+            pointLightAmbient[i] = super.getUniformLocation("pointLightAmbient[" + i + "]");
+            pointLightDiffuse[i] = super.getUniformLocation("pointLightDiffuse[" + i + "]");
+            pointLightColor[i] = super.getUniformLocation("pointLightColor[" + i + "]");
+            pointLightAttenuation[i] = super.getUniformLocation("pointLightAttenuation[" + i + "]");
+        }
+    }
+
     @Override
     protected void bindAttributes() {
         super.bindAttribute(0, "position");
@@ -64,7 +87,7 @@ public class EntityShader extends ShaderProgram {
         super.bindAttribute(2, "normal");
     }
 
-    public void loadDirectionalLight(List<Light> lights) {
+    public void loadDirectionalLights(List<Light> lights) {
         List<DirectionalLight> directionalLights = getDirectionalLights(lights);
         for (int i = 0; i < directionalLights.size(); i++) {
             super.loadVector3f(directionalLightDirection[i], directionalLights.get(i).getDirection());
@@ -74,8 +97,15 @@ public class EntityShader extends ShaderProgram {
         }
     }
 
-    private void loadSkyColor() {
-        super.loadVector3f(skyColor, new Vector3f(SKY_COLOR.x, SKY_COLOR.y, SKY_COLOR.z));
+    public void loadPointLights(List<Light> lights) {
+        List<PointLight> pointLights = getPointLights(lights);
+        for (int i = 0; i < pointLights.size(); i++) {
+            super.loadVector3f(pointLightPosition[i], pointLights.get(i).getPosition());
+            super.loadVector3f(pointLightAmbient[i], pointLights.get(i).getAmbient());
+            super.loadVector3f(pointLightDiffuse[i], pointLights.get(i).getDiffuse());
+            super.loadVector3f(pointLightColor[i], pointLights.get(i).getColor());
+            super.loadVector3f(pointLightAttenuation[i], pointLights.get(i).getAttenuation());
+        }
     }
 
     public void loadTransformationMatrix(Matrix4f matrix) {
@@ -98,5 +128,15 @@ public class EntityShader extends ShaderProgram {
             }
         }
         return directionalLights;
+    }
+
+    private List<PointLight> getPointLights(List<Light> lights) {
+        List<PointLight> pointLights = new ArrayList<PointLight>();
+        for (Light light : lights) {
+            if (light.getClass() == PointLight.class) {
+                pointLights.add((PointLight) light);
+            }
+        }
+        return pointLights;
     }
 }

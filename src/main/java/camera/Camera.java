@@ -80,4 +80,8 @@ public class Camera extends Thread {
             pitch = MIN_PITCH;
         }
     }
+
+    public Target getTarget() {
+        return target;
+    }
 }

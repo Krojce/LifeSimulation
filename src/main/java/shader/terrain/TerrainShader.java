@@ -5,7 +5,9 @@ import lights.DirectionalLight;
 import lights.Light;
 import lights.PointLight;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import shader.ShaderProgram;
+import terrain.Terrain;
 import toolbox.math.Maths;
 
 import java.util.ArrayList;
@@ -35,6 +37,12 @@ public class TerrainShader extends ShaderProgram {
     private int[] pointLightColor;
     private int[] pointLightAttenuation;
 
+    //Spotlight
+    private int spotlightPosition;
+    private int spotlightDirection;
+    private int spotlightColor;
+    private int spotlightCutoff;
+
     public TerrainShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
     }
@@ -44,6 +52,11 @@ public class TerrainShader extends ShaderProgram {
         locationTransformationMatrix = super.getUniformLocation("transformationMatrix");
         locationProjectionMatrix = super.getUniformLocation("projectionMatrix");
         locationViewMatrix = super.getUniformLocation("viewMatrix");
+
+        spotlightPosition = super.getUniformLocation("spotlightPosition");
+        spotlightDirection = super.getUniformLocation("spotlightDirection");
+        spotlightColor = super.getUniformLocation("spotlightColor");
+        spotlightCutoff = super.getUniformLocation("spotlightCutoff");
 
         getDirectionalLightsUniformLocations();
         getPointLightsUniformLocations();
@@ -84,6 +97,14 @@ public class TerrainShader extends ShaderProgram {
         super.bindAttribute(0, "inPosition");
         super.bindAttribute(1, "inColor");
         super.bindAttribute(2, "inNormal");
+    }
+
+    public void loadSpotlight(Camera camera, Vector3f color, float cutoff) {
+        Vector3f targetPosition = camera.getTarget().getPosition();
+        super.loadVector3f(spotlightPosition, new Vector3f(targetPosition.x, Terrain.getHeight(targetPosition.x, targetPosition.z) + 80, targetPosition.z));
+        super.loadVector3f(spotlightDirection, new Vector3f(0, -1, 0));
+        super.loadFloat(spotlightCutoff, cutoff);
+        super.loadVector3f(spotlightColor, color);
     }
 
     public void loadDirectionalLights(List<Light> lights) {

@@ -6,6 +6,8 @@ in vec3 normal;
 
 out vec2 passTextureCoords;
 out vec4 passLighting;
+out vec3 passSurfaceNormal;
+out vec3 passSurfacePosition;
 
 uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
@@ -46,5 +48,7 @@ void main(void){
 	gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(position,1.0);
 	passTextureCoords = textureCoords;
 	passLighting = vec4(calculateDirectionalLight(), 1.0);
+    passSurfaceNormal = (transformationMatrix * vec4(normal,0.0)).xyz;
+    passSurfacePosition = position;
 
 }

@@ -8,6 +8,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import render.EntityRenderer;
 import render.RockRenderer;
@@ -72,13 +73,15 @@ public class RenderManager {
         terrainShader.loadViewMatrix(camera);
         terrainShader.loadDirectionalLights(lights);
         terrainShader.loadPointLights(lights);
+        terrainShader.loadSpotlight(camera, new Vector3f(1, 0, 1), 20);
         terrainRenderer.render(terrain);
         terrainShader.stop();
     }
 
     private void renderEntities(Camera camera, List<Light> lights) {
         entityShader.start();
-        entityShader.loadDirectionalLight(lights);
+        entityShader.loadDirectionalLights(lights);
+        entityShader.loadPointLights(lights);
         entityShader.loadViewMatrix(camera);
         entityRenderer.render(EntityManager.getEntities());
         entityShader.stop();
