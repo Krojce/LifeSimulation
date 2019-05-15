@@ -8,12 +8,13 @@ out vec4 outColor;
 
 uniform mat4 viewMatrix;
 
-uniform vec3 pointLightPosition[10];
-uniform vec3 pointLightAmbient[10];
-uniform vec3 pointLightDiffuse[10];
-uniform vec3 pointLightColor[10];
-uniform vec3 pointLightAttenuation[10];
+uniform vec3 pointLightPosition[5];
+uniform vec3 pointLightAmbient[5];
+uniform vec3 pointLightDiffuse[5];
+uniform vec3 pointLightColor[5];
+uniform vec3 pointLightAttenuation[5];
 
+const float pointLightPower = 1.0;
 const float fogDensity = 0.001;
 const vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
 const vec4 skyColor = vec4(0.0, 0.0, 0.0, 1.0);
@@ -26,18 +27,12 @@ vec3 calculatePointLight() {
     vec3 totalSpecular = vec3(0.0);
     vec3 totalAmbient = vec3(0.0);
 
-    float bug = 0.0;
-
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < 5; i++) {
             vec3 lightDir = normalize(-pointLightPosition[i]);
 
             // attenuation
             float distance = length(pointLightPosition[i] - passSurfacePosition);
             float attFactor = 1.0 / (pointLightAttenuation[i].x + (pointLightAttenuation[i].y * distance) + (pointLightAttenuation[i].z * distance * distance));
-
-            if(attFactor < 0.006) {
-                bug = 1.0;
-            }
 
             // diffuse shading
             float diffuseFactor = max(dot(passSurfaceNormal, lightDir), 0.0);
@@ -47,13 +42,10 @@ vec3 calculatePointLight() {
             float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.0), 0);
 
             // combine results
-
-            if(bug != 1.0) {
-                totalDiffuse  += (pointLightColor[i]  * diffuseFactor * (2/distance));
-                totalSpecular += (pointLightColor[i]  * specularFactor * (2/distance));
-            }
+            totalDiffuse  += (pointLightColor[i] * diffuseFactor * attFactor);
+            totalSpecular += (pointLightColor[i] * specularFactor * attFactor);
     }
-    return totalDiffuse + totalSpecular;
+    return (totalDiffuse + totalSpecular) * pointLightPower;
 }
 
 void main(void){
@@ -61,7 +53,7 @@ void main(void){
     float fogFactor = 1.0 /exp(distance * fogDensity);
     fogFactor = clamp(fogFactor, 0.0, 1.0);
 	vec4 finalColor = mix(skyColor, passColor, fogFactor);
-	outColor = passColor + vec4(calculatePointLight(), 1.0);
+	outColor = finalColor + vec4(calculatePointLight(), 1.0);
 	if(fogFactor < 0.0) {
 	    outColor = vec4(1 - fogFactor, 0.0, 0.0, 0.0);
 	}

@@ -69,9 +69,9 @@ public class Main {
                 new Vector3f(-0.2f, -1.0f, -0.3f)
         );
 
-        for (int i = 0; i < 10; i++) {
-            float randomX = random.nextFloat() * Terrain.getSIZE();
-            float randomZ = random.nextFloat() * Terrain.getSIZE();
+        for (int i = 0; i < 5; i++) {
+            float randomX = random.nextFloat() * 200 + Terrain.getSIZE() / 2;
+            float randomZ = random.nextFloat() * 200 + Terrain.getSIZE() / 2;
 
             float randomR = random.nextFloat();
             float randomG = random.nextFloat();
@@ -84,7 +84,7 @@ public class Main {
                     new Vector3f(0.01f, 0.01f, 0.01f),
                     new Color(randomR, randomG, randomB),
                     new Vector3f(randomX, 1, randomZ),
-                    new Vector3f(1f, 0.2f, 0.2f)
+                    new Vector3f(1, 0.1f, 0.01f)
             ));
         }
 

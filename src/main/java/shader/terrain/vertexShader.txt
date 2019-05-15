@@ -23,7 +23,6 @@ vec3 calculateDirectionalLight() {
 
     vec3 totalDiffuse = vec3(0.0);
     vec3 totalSpecular = vec3(0.0);
-    vec3 totalAmbient = vec3(0.0);
 
     for(int i = 0; i < 1; i++) {
         vec3 lightDir = normalize(-directionalLightDirection[i]);
@@ -38,10 +37,9 @@ vec3 calculateDirectionalLight() {
             // combine results
             totalDiffuse  += directionalLightColor[i]  * diffuseFactor;
             totalSpecular += directionalLightColor[i]  * specularFactor;
-            totalAmbient += directionalLightAmbient[i];
     }
 
-    return totalDiffuse + totalSpecular + totalAmbient;
+    return totalDiffuse + totalSpecular;
 }
 
 void main(void){

@@ -28,7 +28,7 @@ public class TerrainShader extends ShaderProgram {
     private int[] directionalLightDiffuse;
     private int[] directionalLightColor;
 
-    //Directional
+    //Point
     private int[] pointLightPosition;
     private int[] pointLightAmbient;
     private int[] pointLightDiffuse;
@@ -70,7 +70,7 @@ public class TerrainShader extends ShaderProgram {
         pointLightColor = new int[POINT];
         pointLightAttenuation = new int[POINT];
 
-        for (int i = 0; i < DIRECTIONAL; i++) {
+        for (int i = 0; i < POINT; i++) {
             pointLightPosition[i] = super.getUniformLocation("pointLightPosition[" + i + "]");
             pointLightAmbient[i] = super.getUniformLocation("pointLightAmbient[" + i + "]");
             pointLightDiffuse[i] = super.getUniformLocation("pointLightDiffuse[" + i + "]");
