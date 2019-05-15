@@ -5,16 +5,46 @@ in vec2 textureCoords;
 in vec3 normal;
 
 out vec2 passTextureCoords;
-out vec3 surfaceNormal;
+out vec4 passLighting;
 
 uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
+uniform vec3 directionalLightDirection[1];
+uniform vec3 directionalLightAmbient[1];
+uniform vec3 directionalLightDiffuse[1];
+uniform vec3 directionalLightColor[1];
+
+vec3 calculateDirectionalLight() {
+
+    vec3 viewDirection = vec3(viewMatrix[1][3], viewMatrix[2][3], viewMatrix[3][3]);
+
+    vec3 totalDiffuse = vec3(0.0);
+    vec3 totalSpecular = vec3(0.0);
+
+    for(int i = 0; i < 1; i++) {
+        vec3 lightDir = normalize(-directionalLightDirection[i]);
+
+            // diffuse shading
+            float diffuseFactor = max(dot(normal, lightDir), 0.0);
+
+            // specular shading
+            vec3 reflectDirection = reflect(-lightDir, normal);
+            float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.0), 0);
+
+            // combine results
+            totalDiffuse  += directionalLightColor[i]  * diffuseFactor;
+            totalSpecular += directionalLightColor[i]  * specularFactor;
+    }
+
+    return totalDiffuse + totalSpecular;
+}
+
 void main(void){
 
 	gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(position,1.0);
 	passTextureCoords = textureCoords;
-	surfaceNormal = (transformationMatrix * vec4(normal,0.0)).xyz;
+	passLighting = vec4(calculateDirectionalLight(), 1.0);
 
 }

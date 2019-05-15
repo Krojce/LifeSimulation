@@ -1,11 +1,15 @@
 package shader.entity;
 
 import camera.Camera;
-import camera.DirectionalLight;
+import lights.DirectionalLight;
+import lights.Light;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import shader.ShaderProgram;
 import toolbox.math.Maths;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static manager.RenderManager.SKY_COLOR;
 
@@ -14,17 +18,19 @@ public class EntityShader extends ShaderProgram {
     private static final String VERTEX_FILE = "src/main/java/shader/entity/vertexShader.txt";
     private static final String FRAGMENT_FILE = "src/main/java/shader/entity/fragmentShader.txt";
 
+    private static final int DIRECTIONAL = 2;
+
     private int locationTransformationMatrix;
     private int locationProjectionMatrix;
     private int locationViewMatrix;
 
     private int skyColor;
 
-    private int lightDirection;
-    private int lightAmbient;
-    private int lightDiffuse;
-    private int lightSpecular;
-    private int lightColor;
+    //Directional
+    private int[] directionalLightDirection;
+    private int[] directionalLightAmbient;
+    private int[] directionalLightDiffuse;
+    private int[] directionalLightColor;
 
     public EntityShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -38,11 +44,17 @@ public class EntityShader extends ShaderProgram {
 
         skyColor = super.getUniformLocation("skyColor");
 
-        lightDirection = super.getUniformLocation("lightDirection");
-        lightAmbient = super.getUniformLocation("lightAmbient");
-        lightDiffuse = super.getUniformLocation("lightDiffuse");
-        lightSpecular = super.getUniformLocation("lightSpecular");
-        lightColor = super.getUniformLocation("lightColor");
+        directionalLightDirection = new int[DIRECTIONAL];
+        directionalLightAmbient = new int[DIRECTIONAL];
+        directionalLightDiffuse = new int[DIRECTIONAL];
+        directionalLightColor = new int[DIRECTIONAL];
+
+        for (int i = 0; i < DIRECTIONAL; i++) {
+            directionalLightDirection[i] = super.getUniformLocation("directionalLightDirection[" + i + "]");
+            directionalLightAmbient[i] = super.getUniformLocation("directionalLightAmbient[" + i + "]");
+            directionalLightDiffuse[i] = super.getUniformLocation("directionalLightDiffuse[" + i + "]");
+            directionalLightColor[i] = super.getUniformLocation("directionalLightColor[" + i + "]");
+        }
     }
 
     @Override
@@ -52,13 +64,14 @@ public class EntityShader extends ShaderProgram {
         super.bindAttribute(2, "normal");
     }
 
-    public void loadLight(DirectionalLight light) {
-        super.loadVector3f(lightDirection, light.getDirection());
-        super.loadVector3f(lightAmbient, light.getAmbient());
-        super.loadVector3f(lightDiffuse, light.getDiffuse());
-        super.loadVector3f(lightSpecular, light.getSpecular());
-        super.loadVector3f(lightColor, light.getColor());
-        loadSkyColor();
+    public void loadDirectionalLight(List<Light> lights) {
+        List<DirectionalLight> directionalLights = getDirectionalLights(lights);
+        for (int i = 0; i < directionalLights.size(); i++) {
+            super.loadVector3f(directionalLightDirection[i], directionalLights.get(i).getDirection());
+            super.loadVector3f(directionalLightAmbient[i], directionalLights.get(i).getAmbient());
+            super.loadVector3f(directionalLightDiffuse[i], directionalLights.get(i).getDiffuse());
+            super.loadVector3f(directionalLightColor[i], directionalLights.get(i).getColor());
+        }
     }
 
     private void loadSkyColor() {
@@ -75,5 +88,15 @@ public class EntityShader extends ShaderProgram {
 
     public void loadViewMatrix(Camera camera) {
         super.loadMatrix(locationViewMatrix, Maths.createViewMatrix(camera));
+    }
+
+    private List<DirectionalLight> getDirectionalLights(List<Light> lights) {
+        List<DirectionalLight> directionalLights = new ArrayList<DirectionalLight>();
+        for (Light light : lights) {
+            if (light.getClass() == DirectionalLight.class) {
+                directionalLights.add((DirectionalLight) light);
+            }
+        }
+        return directionalLights;
     }
 }

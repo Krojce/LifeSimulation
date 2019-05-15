@@ -1,14 +1,13 @@
 package manager;
 
 import camera.Camera;
-import camera.DirectionalLight;
+import lights.Light;
 import loader.Loader;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import render.EntityRenderer;
 import render.RockRenderer;
@@ -19,6 +18,8 @@ import shader.entity.EntityShader;
 import shader.rock.RockShader;
 import shader.terrain.TerrainShader;
 import terrain.Terrain;
+
+import java.util.List;
 
 public class RenderManager {
 
@@ -40,20 +41,20 @@ public class RenderManager {
     private RockRenderer rockRenderer;
     private RockShader rockShader = new RockShader();
 
-    public RenderManager(Loader loader) {
+    public RenderManager(Loader loader, List<Rock> rocks) {
         //GL11.glEnable(GL11.GL_CULL_FACE);
         //GL11.glCullFace(GL11.GL_BACK);
         createProjectionMatrix();
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
         entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
         skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
-        rockRenderer = new RockRenderer(rockShader, loader, new Rock(new Vector3f(2000, 0, 2000), new Vector3f(0, 0, 0), 30));
+        rockRenderer = new RockRenderer(rockShader, loader, rocks);
     }
 
-    public void render(Camera camera, DirectionalLight light) {
+    public void render(Camera camera, List<Light> lights) {
         prepare();
-        renderTerrain(camera, light);
-        renderEntities(camera, light);
+        renderTerrain(camera, lights);
+        renderEntities(camera, lights);
         renderSkybox(camera);
         renderRock(camera);
     }
@@ -66,17 +67,18 @@ public class RenderManager {
         rockRenderer.render(camera, projectionMatrix);
     }
 
-    private void renderTerrain(Camera camera, DirectionalLight light) {
+    private void renderTerrain(Camera camera, List<Light> lights) {
         terrainShader.start();
         terrainShader.loadViewMatrix(camera);
-        terrainShader.loadLight(light);
+        terrainShader.loadDirectionalLights(lights);
+        terrainShader.loadPointLights(lights);
         terrainRenderer.render(terrain);
         terrainShader.stop();
     }
 
-    private void renderEntities(Camera camera, DirectionalLight light) {
+    private void renderEntities(Camera camera, List<Light> lights) {
         entityShader.start();
-        entityShader.loadLight(light);
+        entityShader.loadDirectionalLight(lights);
         entityShader.loadViewMatrix(camera);
         entityRenderer.render(EntityManager.getEntities());
         entityShader.stop();
@@ -118,6 +120,7 @@ public class RenderManager {
         entityShader.cleanUp();
         terrainShader.cleanUp();
         skyboxRenderer.cleanShader();
+        rockShader.cleanUp();
     }
 
     public Matrix4f getProjectionMatrix() {

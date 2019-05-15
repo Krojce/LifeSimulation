@@ -7,6 +7,7 @@ import loader.OBJLoader;
 import model.RawModel;
 import model.TexturedModel;
 import org.lwjgl.util.vector.Vector3f;
+import resources.Rock;
 import textures.ModelTexture;
 import toolbox.picking.EntityPicker;
 
@@ -67,6 +68,10 @@ public class EntityFactory {
 
     private Boar createBoar(Vector3f position, EntityPicker picker) {
         return new Boar(texturedModels.get("boar"), position, new Vector3f(0, 0, 0), 1f, picker);
+    }
+
+    public Rock createRock(Vector3f position) {
+        return new Rock(position, new Vector3f(0, 0, 0), 1f);
     }
 
     private TexturedModel createTexturedModel(String name) {
