@@ -8,19 +8,25 @@ public class GuiShader extends ShaderProgram {
     private static final String VERTEX_FILE = "src/main/java/shader/gui/vertexShader.txt";
     private static final String FRAGMENT_FILE = "src/main/java/shader/gui/fragmentShader.txt";
 
-    private int location_transformationMatrix;
+    private int transformationMatrix;
+    private int offset;
 
     public GuiShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
     }
 
     public void loadTransformation(Matrix4f matrix) {
-        super.loadMatrix(location_transformationMatrix, matrix);
+        super.loadMatrix(transformationMatrix, matrix);
+    }
+
+    public void loadOffset(float value) {
+        super.loadFloat(offset, value);
     }
 
     @Override
     protected void getAllUniformLocations() {
-        location_transformationMatrix = super.getUniformLocation("transformationMatrix");
+        transformationMatrix = super.getUniformLocation("transformationMatrix");
+        offset = super.getUniformLocation("offset");
     }
 
     @Override

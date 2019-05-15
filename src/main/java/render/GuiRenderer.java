@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 import shader.gui.GuiShader;
 import textures.GuiTexture;
+import toolbox.Timer;
 import toolbox.math.Maths;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class GuiRenderer {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTexture());
             Matrix4f matrix = Maths.createTransformationMatrix(texture.getPosition(), texture.getScale());
             guiShader.loadTransformation(matrix);
+            guiShader.loadOffset(Timer.getCurrentTime());
             GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP, 0, quad.getVertexCount());
         }
         GL20.glDisableVertexAttribArray(0);
