@@ -7,7 +7,7 @@ public class MyMouse {
 
     private static MyMouse ACTIVE_MOUSE = new MyMouse();
 
-    private boolean leftClick = false;
+    private static boolean leftClick = false;
 
     private float x = 0;
     private float y = 0;
@@ -26,7 +26,7 @@ public class MyMouse {
         setPosition();
     }
 
-    public boolean isLeftClick() {
+    public static boolean isLeftClick() {
         return leftClick;
     }
 

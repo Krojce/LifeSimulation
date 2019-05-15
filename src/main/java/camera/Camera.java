@@ -12,7 +12,7 @@ public class Camera extends Thread {
 
     private float distanceFromPlayer = 0;
 
-    private Vector3f position = new Vector3f(0, 10, 0);
+    private static Vector3f position = new Vector3f(0, 10, 0);
     private float pitch = 30;
     private float yaw;
     private Target target;
@@ -30,7 +30,7 @@ public class Camera extends Thread {
         this.yaw = 180 - target.getRotY();
     }
 
-    public Vector3f getPosition() {
+    public static Vector3f getPosition() {
         return position;
     }
 

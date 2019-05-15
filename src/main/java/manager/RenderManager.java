@@ -8,11 +8,15 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 import render.EntityRenderer;
+import render.RockRenderer;
 import render.SkyboxRenderer;
 import render.TerrainRenderer;
+import resources.Rock;
 import shader.entity.EntityShader;
+import shader.rock.RockShader;
 import shader.terrain.TerrainShader;
 import terrain.Terrain;
 
@@ -33,16 +37,17 @@ public class RenderManager {
 
     private SkyboxRenderer skyboxRenderer;
 
-    private EntityManager entityManager;
+    private RockRenderer rockRenderer;
+    private RockShader rockShader = new RockShader();
 
-    public RenderManager(Loader loader, EntityManager entityManager) {
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glCullFace(GL11.GL_BACK);
+    public RenderManager(Loader loader) {
+        //GL11.glEnable(GL11.GL_CULL_FACE);
+        //GL11.glCullFace(GL11.GL_BACK);
         createProjectionMatrix();
         terrainRenderer = new TerrainRenderer(terrainShader, projectionMatrix);
         entityRenderer = new EntityRenderer(entityShader, projectionMatrix);
         skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
-        this.entityManager = entityManager;
+        rockRenderer = new RockRenderer(rockShader, loader, new Rock(new Vector3f(2000, 0, 2000), new Vector3f(0, 0, 0), 30));
     }
 
     public void render(Camera camera, DirectionalLight light) {
@@ -50,10 +55,15 @@ public class RenderManager {
         renderTerrain(camera, light);
         renderEntities(camera, light);
         renderSkybox(camera);
+        renderRock(camera);
     }
 
     private void renderSkybox(Camera camera) {
         skyboxRenderer.render(camera);
+    }
+
+    private void renderRock(Camera camera) {
+        rockRenderer.render(camera, projectionMatrix);
     }
 
     private void renderTerrain(Camera camera, DirectionalLight light) {
@@ -68,7 +78,7 @@ public class RenderManager {
         entityShader.start();
         entityShader.loadLight(light);
         entityShader.loadViewMatrix(camera);
-        entityRenderer.render(entityManager.getEntities());
+        entityRenderer.render(EntityManager.getEntities());
         entityShader.stop();
     }
 

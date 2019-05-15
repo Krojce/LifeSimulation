@@ -2,16 +2,16 @@ package manager;
 
 import entity.template.BaseEntity;
 import model.TexturedModel;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.*;
 
 public class EntityManager {
 
-    private Map<TexturedModel, List<BaseEntity>> entities = new HashMap<TexturedModel, List<BaseEntity>>();
-
-    private Timer timer = new Timer(true);
+    private static Map<TexturedModel, List<BaseEntity>> entities = new HashMap<TexturedModel, List<BaseEntity>>();
 
     public EntityManager() {
+        Timer timer = new Timer(true);
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -28,6 +28,12 @@ public class EntityManager {
         }
     }
 
+    public static void removeEntity(BaseEntity baseEntity) {
+        for (Map.Entry<TexturedModel, List<BaseEntity>> entry : entities.entrySet()) {
+            entry.getValue().remove(baseEntity);
+        }
+    }
+
     public void addEntity(BaseEntity entity) {
         TexturedModel entityModel = entity.getTexturedModel();
         List<BaseEntity> batch = entities.get(entityModel);
@@ -40,17 +46,19 @@ public class EntityManager {
         }
     }
 
-    public void removeEntity(BaseEntity baseEntity) {
-        for (Map.Entry<TexturedModel, List<BaseEntity>> entry : entities.entrySet()) {
-            entry.getValue().remove(baseEntity);
-        }
+    public static Map<TexturedModel, List<BaseEntity>> getEntities() {
+        return entities;
     }
 
     public void clearWorld() {
         entities.clear();
     }
 
-    public Map<TexturedModel, List<BaseEntity>> getEntities() {
-        return entities;
+    public void handlePicking(Vector3f currentPoint) {
+        for (Map.Entry<TexturedModel, List<BaseEntity>> entry : entities.entrySet()) {
+            for (BaseEntity entity : entry.getValue()) {
+                entity.handlePicking(currentPoint);
+            }
+        }
     }
 }

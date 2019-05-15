@@ -17,7 +17,8 @@ import terrain.Terrain;
 import toolbox.Color;
 import toolbox.Timer;
 import toolbox.input.MyMouse;
-import toolbox.input.Raycast;
+import toolbox.picking.EntityPicker;
+import toolbox.picking.TerrainCollisionDetector;
 
 import java.lang.reflect.Field;
 import java.util.Random;
@@ -58,13 +59,15 @@ public class Main {
                 new Vector3f(0.2f, 0.2f, 0.2f),
                 new Color(1.0f, 1.0f, 1.0f));
 
-        EntityManager entityManager = new EntityManager();
-        RenderManager renderer = new RenderManager(loader, entityManager);
+        Camera camera = new Camera(new Target(new Vector3f(Terrain.getSIZE() / 2, 50, Terrain.getSIZE() / 2)));
         EntityFactory entityFactory = new EntityFactory(loader);
+        RenderManager renderer = new RenderManager(loader);
+        TerrainCollisionDetector terrainCollisionDetector = new TerrainCollisionDetector(camera, renderer.getProjectionMatrix());
+        EntityPicker entityPicker = new EntityPicker(camera, renderer.getProjectionMatrix());
+        EntityManager entityManager = new EntityManager();
 
 
         Terrain terrain = new Terrain(loader);
-        Camera camera = new Camera(new Target(new Vector3f(Terrain.getSIZE() / 2, 50, Terrain.getSIZE() / 2)));
         MyMouse mouse = MyMouse.getActiveMouse();
 
         Random random = new Random();
@@ -72,10 +75,8 @@ public class Main {
         for (int i = 0; i < 50; i++) {
             float randomX = random.nextFloat() * Terrain.getSIZE();
             float randomZ = random.nextFloat() * Terrain.getSIZE();
-            entityManager.addEntity(entityFactory.createEntity(new Vector3f(randomX, 0, randomZ), "tree"));
+            entityManager.addEntity(entityFactory.createEntity(new Vector3f(randomX, 0, randomZ), "tree", entityPicker));
         }
-
-        Raycast raycast = new Raycast(camera, renderer.getProjectionMatrix(), terrain);
 
         GuiRenderer guiRenderer = new GuiRenderer(loader);
         ButtonPanel buttonPanel = new ButtonPanel(mouse, loader);
@@ -92,13 +93,17 @@ public class Main {
 
             camera.move();
             mouse.update();
-            raycast.update();
+            terrainCollisionDetector.update();
             sun.update();
 
-            if (mouse.isLeftClick()) {
-                Vector3f position = raycast.getCurrentTerrainPoint();
+            if (MyMouse.isLeftClick()) {
+                Vector3f position = terrainCollisionDetector.getCurrentTerrainPoint();
                 if (position != null) {
-                    entityManager.addEntity(entityFactory.createEntity(position, buttonPanel.getActiveEntity()));
+                    if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)) {
+                        entityManager.addEntity(entityFactory.createEntity(position, buttonPanel.getActiveEntity(), entityPicker));
+                    } else {
+                        entityManager.handlePicking(position);
+                    }
                 }
             }
 

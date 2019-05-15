@@ -6,6 +6,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import static java.lang.Math.pow;
+
 public class Maths {
 
     public static float barryCentric(Vector3f p1, Vector3f p2, Vector3f p3, Vector2f pos) {
@@ -35,7 +37,7 @@ public class Maths {
                 (float) Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0), viewMatrix, viewMatrix);
         Matrix4f.rotate(
                 (float) Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
-        Vector3f cameraPos = camera.getPosition();
+        Vector3f cameraPos = Camera.getPosition();
         Vector3f negativeCameraPos = new Vector3f(-cameraPos.x, -cameraPos.y, -cameraPos.z);
         Matrix4f.translate(negativeCameraPos, viewMatrix, viewMatrix);
         return viewMatrix;
@@ -107,5 +109,14 @@ public class Maths {
 
     public static Vector3f changeVectorByValues(Vector3f vector, float value) {
         return new Vector3f(vector.x + value, vector.y + value, vector.z + value);
+    }
+
+    public static boolean isSphereIntersected(Vector3f terrainPoint, float radius, Vector3f position) {
+
+        float x = (float) pow(position.x - terrainPoint.x, 2);
+        float y = (float) pow(position.y - terrainPoint.y, 2);
+        float z = (float) pow(position.z - terrainPoint.z, 2);
+
+        return x + y + z < pow(radius, 2);
     }
 }

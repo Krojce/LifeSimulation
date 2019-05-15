@@ -3,18 +3,24 @@ package entity.template;
 import model.TexturedModel;
 import org.lwjgl.util.vector.Vector3f;
 import terrain.Terrain;
+import toolbox.collision.Collider;
+import toolbox.picking.EntityPicker;
 
 public abstract class BaseEntity implements EntityUpdate {
-    protected TexturedModel texturedModel;
+    protected Collider collider;
     protected Vector3f position;
     protected Vector3f rotation;
     protected float scale;
+    protected EntityPicker picker;
+    private TexturedModel texturedModel;
 
-    public BaseEntity(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale) {
+    public BaseEntity(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale, EntityPicker picker) {
         this.texturedModel = texturedModel;
         this.position = new Vector3f(position.x, Terrain.getHeight(position.x, position.z), position.z);
         this.rotation = rotation;
         this.scale = scale;
+        this.picker = picker;
+        collider = new Collider(35, position);
     }
 
     public TexturedModel getTexturedModel() {
@@ -47,5 +53,13 @@ public abstract class BaseEntity implements EntityUpdate {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public Collider getCollider() {
+        return collider;
+    }
+
+    public void setCollider(Collider collider) {
+        this.collider = collider;
     }
 }

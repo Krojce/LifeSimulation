@@ -23,7 +23,7 @@ public class TerrainRenderer {
 
     public void render(Terrain terrain) {
         prepareTerrain(terrain);
-        loadModelMatrix(terrain);
+        loadModelMatrix();
         GL11.glDrawElements(
                 GL11.GL_TRIANGLES, terrain.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
         unbindData();
@@ -45,7 +45,7 @@ public class TerrainRenderer {
         GL30.glBindVertexArray(0);
     }
 
-    private void loadModelMatrix(Terrain terrain) {
+    private void loadModelMatrix() {
         Matrix4f transformationMatrix =
                 Maths.createTransformationMatrix(
                         new Vector3f(0, 0, 0), 0, 0, 0, 1);
