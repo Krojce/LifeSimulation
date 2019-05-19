@@ -2,6 +2,7 @@ package shader.entity;
 
 import camera.Camera;
 import lights.DirectionalLight;
+import model.Material;
 import org.lwjgl.util.vector.Matrix4f;
 import shader.ShaderProgram;
 import toolbox.math.Maths;
@@ -14,6 +15,11 @@ public class EntityShader extends ShaderProgram {
     private int locationTransformationMatrix;
     private int locationProjectionMatrix;
     private int locationViewMatrix;
+
+    private int materialAmbient;
+    private int materialDiffuse;
+    private int materialSpecular;
+    private int materialShininess;
 
     //Directional
     private int directionalLightDirection;
@@ -31,6 +37,11 @@ public class EntityShader extends ShaderProgram {
         locationProjectionMatrix = super.getUniformLocation("projectionMatrix");
         locationViewMatrix = super.getUniformLocation("viewMatrix");
 
+        materialAmbient = super.getUniformLocation("materialAmbient");
+        materialDiffuse = super.getUniformLocation("materialDiffuse");
+        materialSpecular = super.getUniformLocation("materialSpecular");
+        materialShininess = super.getUniformLocation("materialShininess");
+
         getDirectionalLightsUniformLocations();
     }
 
@@ -46,6 +57,13 @@ public class EntityShader extends ShaderProgram {
         super.loadVector3f(directionalLightAmbient, sun.getAmbient());
         super.loadVector3f(directionalLightDiffuse, sun.getDiffuse());
         super.loadVector3f(directionalLightColor, sun.getColor());
+    }
+
+    public void loadDirectionalLight(Material material) {
+        super.loadVector3f(materialAmbient, material.getAmbient());
+        super.loadVector3f(materialDiffuse, material.getDiffuse());
+        super.loadVector3f(materialSpecular, material.getSpecular());
+        super.loadFloat(materialShininess, material.getShininess());
     }
 
     @Override

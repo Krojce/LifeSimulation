@@ -13,6 +13,11 @@ uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
+uniform vec3 materialAmbient;
+uniform vec3 materialDiffuse;
+uniform vec3 materialSpecular;
+uniform float materialShininess;
+
 uniform vec3 directionalLightDirection;
 uniform vec3 directionalLightAmbient;
 uniform vec3 directionalLightDiffuse;
@@ -31,13 +36,13 @@ vec3 calculateDirectionalLight() {
 
     // specular shading
     vec3 reflectDirection = reflect(-lightDir, normal);
-    float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.0), 0);
+    float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.0), materialShininess);
 
     // combine results
     totalDiffuse  += directionalLightColor  * diffuseFactor;
     totalSpecular += directionalLightColor  * specularFactor;
 
-    return totalDiffuse + totalSpecular;
+    return materialAmbient + totalDiffuse * materialDiffuse + totalSpecular * materialSpecular;
 }
 
 void main(void){

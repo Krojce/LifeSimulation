@@ -14,6 +14,7 @@ import manager.DisplayManager;
 import manager.EntityManager;
 import manager.RenderManager;
 import manager.TextManager;
+import model.Material;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
@@ -79,6 +80,24 @@ public class Main {
                 new Vector3f(-0.2f, -1.0f, -0.3f)
         );
 
+        List<Material> materials = new ArrayList<Material>();
+
+        for (int i = 0; i < 10; i++) {
+            materials.add(new Material(
+                    new Vector3f(random.nextFloat(), random.nextFloat(), random.nextFloat()),
+                    new Vector3f(random.nextFloat(), random.nextFloat(), random.nextFloat()),
+                    new Vector3f(random.nextFloat(), random.nextFloat(), random.nextFloat()),
+                    random.nextFloat() * 100
+            ));
+        }
+
+        Material material = new Material(
+                new Vector3f(1.0f, 0.5f, 0.31f),
+                new Vector3f(1.0f, 0.5f, 0.31f),
+                new Vector3f(0.5f, 0.5f, 0.5f),
+                32.0f
+        );
+
         for (int i = 0; i < 5; i++) {
             float randomX = random.nextFloat() * 200 + Terrain.getSIZE() / 2;
             float randomZ = random.nextFloat() * 200 + Terrain.getSIZE() / 2;
@@ -121,8 +140,13 @@ public class Main {
 
         while (!Display.isCloseRequested()) {
 
-            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_R)) {
-                entityManager.clearWorld();
+            while (Keyboard.next()) {
+                if (Keyboard.getEventKeyState() && Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_R)) {
+                    entityManager.clearWorld();
+                }
+                if (Keyboard.isKeyDown(Keyboard.KEY_P)) {
+                    material = materials.get(random.nextInt(materials.size() - 1));
+                }
             }
 
             buttonPanel.update();
@@ -144,7 +168,7 @@ public class Main {
             }
 
             renderer.processTerrain(terrain);
-            renderer.render(camera, lights, sun);
+            renderer.render(camera, lights, sun, material);
             guiRenderer.render(buttonPanel);
             textManager.render();
             DisplayManager.updateDisplay();

@@ -4,6 +4,7 @@ import camera.Camera;
 import lights.DirectionalLight;
 import lights.Light;
 import loader.Loader;
+import model.Material;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -53,10 +54,10 @@ public class RenderManager {
         rockRenderer = new RockRenderer(rockShader, loader, rocks);
     }
 
-    public void render(Camera camera, List<Light> lights, DirectionalLight sun) {
+    public void render(Camera camera, List<Light> lights, DirectionalLight sun, Material material) {
         prepare();
         renderTerrain(camera, lights, sun);
-        renderEntities(camera, sun);
+        renderEntities(camera, sun, material);
         renderSkybox(camera);
         renderRock(camera);
     }
@@ -79,10 +80,11 @@ public class RenderManager {
         terrainShader.stop();
     }
 
-    private void renderEntities(Camera camera, DirectionalLight sun) {
+    private void renderEntities(Camera camera, DirectionalLight sun, Material material) {
         entityShader.start();
         entityShader.loadViewMatrix(camera);
         entityShader.loadDirectionalLight(sun);
+        entityShader.loadDirectionalLight(material);
         entityRenderer.render(EntityManager.getEntities());
         entityShader.stop();
     }
