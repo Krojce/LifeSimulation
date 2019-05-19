@@ -17,7 +17,6 @@ public class TerrainShader extends ShaderProgram {
     private static final String VERTEX_FILE = "src/main/java/shader/terrain/vertexShader.txt";
     private static final String FRAGMENT_FILE = "src/main/java/shader/terrain/fragmentShader.txt";
 
-    private static final int DIRECTIONAL = 2;
     private static final int POINT = 10;
 
     private int locationTransformationMatrix;
@@ -25,10 +24,10 @@ public class TerrainShader extends ShaderProgram {
     private int locationViewMatrix;
 
     //Directional
-    private int[] directionalLightDirection;
-    private int[] directionalLightAmbient;
-    private int[] directionalLightDiffuse;
-    private int[] directionalLightColor;
+    private int directionalLightDirection;
+    private int directionalLightAmbient;
+    private int directionalLightDiffuse;
+    private int directionalLightColor;
 
     //Point
     private int[] pointLightPosition;
@@ -63,17 +62,10 @@ public class TerrainShader extends ShaderProgram {
     }
 
     private void getDirectionalLightsUniformLocations() {
-        directionalLightDirection = new int[DIRECTIONAL];
-        directionalLightAmbient = new int[DIRECTIONAL];
-        directionalLightDiffuse = new int[DIRECTIONAL];
-        directionalLightColor = new int[DIRECTIONAL];
-
-        for (int i = 0; i < DIRECTIONAL; i++) {
-            directionalLightDirection[i] = super.getUniformLocation("directionalLightDirection[" + i + "]");
-            directionalLightAmbient[i] = super.getUniformLocation("directionalLightAmbient[" + i + "]");
-            directionalLightDiffuse[i] = super.getUniformLocation("directionalLightDiffuse[" + i + "]");
-            directionalLightColor[i] = super.getUniformLocation("directionalLightColor[" + i + "]");
-        }
+        directionalLightDirection = super.getUniformLocation("directionalLightDirection");
+        directionalLightAmbient = super.getUniformLocation("directionalLightAmbient");
+        directionalLightDiffuse = super.getUniformLocation("directionalLightDiffuse");
+        directionalLightColor = super.getUniformLocation("directionalLightColor");
     }
 
     private void getPointLightsUniformLocations() {
@@ -103,18 +95,18 @@ public class TerrainShader extends ShaderProgram {
         Vector3f targetPosition = camera.getTarget().getPosition();
         super.loadVector3f(spotlightPosition, new Vector3f(targetPosition.x, Terrain.getHeight(targetPosition.x, targetPosition.z) + 80, targetPosition.z));
         super.loadVector3f(spotlightDirection, new Vector3f(0, -1, 0));
+        if (!camera.getTarget().isSpotlightOn()) {
+            super.loadVector3f(spotlightDirection, new Vector3f(0, 1, 0));
+        }
         super.loadFloat(spotlightCutoff, cutoff);
         super.loadVector3f(spotlightColor, color);
     }
 
-    public void loadDirectionalLights(List<Light> lights) {
-        List<DirectionalLight> directionalLights = getDirectionalLights(lights);
-        for (int i = 0; i < directionalLights.size(); i++) {
-            super.loadVector3f(directionalLightDirection[i], directionalLights.get(i).getDirection());
-            super.loadVector3f(directionalLightAmbient[i], directionalLights.get(i).getAmbient());
-            super.loadVector3f(directionalLightDiffuse[i], directionalLights.get(i).getDiffuse());
-            super.loadVector3f(directionalLightColor[i], directionalLights.get(i).getColor());
-        }
+    public void loadDirectionalLight(DirectionalLight sun) {
+        super.loadVector3f(directionalLightDirection, sun.getDirection());
+        super.loadVector3f(directionalLightAmbient, sun.getAmbient());
+        super.loadVector3f(directionalLightDiffuse, sun.getDiffuse());
+        super.loadVector3f(directionalLightColor, sun.getColor());
     }
 
     public void loadPointLights(List<Light> lights) {

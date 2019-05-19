@@ -98,9 +98,6 @@ public class Main {
             ));
         }
 
-
-        lights.add(sun);
-
         Camera camera = new Camera(new Target(new Vector3f(Terrain.getSIZE() / 2, 50, Terrain.getSIZE() / 2)));
         RenderManager renderer = new RenderManager(loader, rocks);
         TerrainCollisionDetector terrainCollisionDetector = new TerrainCollisionDetector(camera, renderer.getProjectionMatrix());
@@ -147,7 +144,7 @@ public class Main {
             }
 
             renderer.processTerrain(terrain);
-            renderer.render(camera, lights);
+            renderer.render(camera, lights, sun);
             guiRenderer.render(buttonPanel);
             textManager.render();
             DisplayManager.updateDisplay();

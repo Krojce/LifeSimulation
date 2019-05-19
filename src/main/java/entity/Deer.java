@@ -13,7 +13,7 @@ public class Deer extends BaseEntity {
 
     public Deer(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale, EntityPicker picker) {
         super(texturedModel, position, rotation, scale, picker);
-        this.wanderMovementSystem = new WanderMovementSystem(1, 0.25f, 80, 10);
+        this.wanderMovementSystem = new WanderMovementSystem(2, 0.01f, 6, 10);
     }
 
     public void update() {

@@ -12,7 +12,7 @@ public class Boar extends BaseEntity {
 
     public Boar(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale, EntityPicker picker) {
         super(texturedModel, position, rotation, scale, picker);
-        this.wanderMovementSystem = new WanderMovementSystem(10, 0.01f, 80, 10);
+        this.wanderMovementSystem = new WanderMovementSystem(10, 0.01f, 10, 10);
     }
 
     public void update() {

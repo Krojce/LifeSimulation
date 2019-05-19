@@ -13,6 +13,7 @@ public class Target {
     private Vector3f position;
     private float rotY;
     private boolean isMovable = true;
+    private boolean isSpotlightOn = true;
 
     private Vector3f CAMERA_ONE = new Vector3f(400, 50, 400);
     private Vector3f CAMERA_TWO = new Vector3f(200, 50, 200);
@@ -27,6 +28,9 @@ public class Target {
         while (Keyboard.next()) {
             if (Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_S) {
                 isMovable = !isMovable;
+            }
+            if (Keyboard.getEventKeyState() && Keyboard.getEventKey() == Keyboard.KEY_L) {
+                isSpotlightOn = !isSpotlightOn;
             }
         }
 
@@ -105,5 +109,21 @@ public class Target {
 
     public float getRotY() {
         return rotY;
+    }
+
+    public boolean isMovable() {
+        return isMovable;
+    }
+
+    public void setMovable(boolean movable) {
+        isMovable = movable;
+    }
+
+    public boolean isSpotlightOn() {
+        return isSpotlightOn;
+    }
+
+    public void setSpotlightOn(boolean spotlightOn) {
+        isSpotlightOn = spotlightOn;
     }
 }

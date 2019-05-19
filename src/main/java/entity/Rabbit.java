@@ -12,7 +12,7 @@ public class Rabbit extends BaseEntity {
 
     public Rabbit(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale, EntityPicker picker) {
         super(texturedModel, position, rotation, scale, picker);
-        this.wanderMovementSystem = new WanderMovementSystem(15, 0.1f, 80, 10);
+        this.wanderMovementSystem = new WanderMovementSystem(10, 0.1f, 10, 10);
     }
 
     public void update() {

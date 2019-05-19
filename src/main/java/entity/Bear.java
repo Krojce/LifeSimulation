@@ -12,7 +12,7 @@ public class Bear extends BaseEntity {
 
     public Bear(TexturedModel texturedModel, Vector3f position, Vector3f rotation, float scale, EntityPicker picker) {
         super(texturedModel, position, rotation, scale, picker);
-        this.wanderMovementSystem = new WanderMovementSystem(1.4f, 0.25f, 80, 10);
+        this.wanderMovementSystem = new WanderMovementSystem(0.5f, 0.025f, 10, 10);
     }
 
     public void update() {
@@ -20,7 +20,12 @@ public class Bear extends BaseEntity {
     }
 
     public void handlePicking(Vector3f position) {
-
+        if (position != null) {
+            boolean isPicked = picker.checkIfPicked(collider, position);
+            if (isPicked) {
+                this.scale *= 0.9f;
+            }
+        }
     }
 
     private void move() {

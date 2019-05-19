@@ -20,7 +20,7 @@ public abstract class BaseEntity implements EntityUpdate {
         this.rotation = rotation;
         this.scale = scale;
         this.picker = picker;
-        collider = new Collider(35, position);
+        this.collider = new Collider(15, position);
     }
 
     public TexturedModel getTexturedModel() {
